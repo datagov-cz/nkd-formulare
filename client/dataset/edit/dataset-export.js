@@ -18,13 +18,13 @@ import {
 import { NON_PUBLIC_LEGISLATION } from "./codelists/non-public";
 
 const CONTEXT_DEFAULT =
-  "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/draft/datová-sada/kontext.jsonld";
+  "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/2026-09-23/datová-sada/kontext.jsonld";
 
 const CONTEXT_HVD =
-  "https://ofn.gov.cz/dcat-ap-cz-hvd/draft/datová-sada/kontext.jsonld";
+  "https://ofn.gov.cz/dcat-ap-cz-hvd/2026-09-23/datová-sada/kontext.jsonld";
 
 const CONTEXT_NON_PUBLIC =
-  "https://ofn.gov.cz/dcat-ap-cz-datová-rozhraní/draft/datová-sada/kontext.jsonld";
+  "https://ofn.gov.cz/dcat-ap-cz-datová-rozhraní/2026-09-23/datová-sada/kontext.jsonld";
 
 /**
  * Set all nodes as blank nodes and remove publisher.

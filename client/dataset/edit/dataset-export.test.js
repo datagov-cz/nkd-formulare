@@ -112,7 +112,7 @@ const BYLANY = {
 };
 
 const BYLANY_EXPECTED_NKOD = {
-  "@context": "https://ofn.gov.cz/dcat-ap-cz-hvd/draft/datová-sada/kontext.jsonld",
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-hvd/2026-09-23/datová-sada/kontext.jsonld",
   "iri": "_:ds",
   "typ": "Datová sada",
   "název": { "cs": "Obec Bylany" },
@@ -156,7 +156,7 @@ test("Bylany from json-ld and back for NKOD.", () => {
 });
 
 const BYLANY_EXPECTED_LKOD = {
-  "@context": "https://ofn.gov.cz/dcat-ap-cz-hvd/draft/datová-sada/kontext.jsonld",
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-hvd/2026-09-23/datová-sada/kontext.jsonld",
   "iri": "https://data.gov.cz/datové-sady",
   "typ": "Datová sada",
   "název": { "cs": "Obec Bylany" },
@@ -207,7 +207,7 @@ test("Bylany from json-ld and back for LKOD.", () => {
 });
 
 const BYLANY_EXPECTED_POST = {
-  "@context": "https://ofn.gov.cz/dcat-ap-cz-hvd/draft/datová-sada/kontext.jsonld",
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-hvd/2026-09-23/datová-sada/kontext.jsonld",
   "iri": "https://data.gov.cz/zdroj/datové-sady/Bylany/243671670",
   "typ": "Datová sada",
   "název": { "cs": "Obec Bylany" },
@@ -377,7 +377,7 @@ const ISS94 = {
 };
 
 const ISS94_EXPECTED_LKOD = {
-  "@context": "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/draft/datová-sada/kontext.jsonld",
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/2026-09-23/datová-sada/kontext.jsonld",
   "iri": "https://local-publisher",
   "typ": "Datová sada",
   "název": { "cs": "aaabbb" },
@@ -516,7 +516,7 @@ const ISS95 = {
 };
 
 const ISS95_EXPECTED_NKOD = {
-  "@context": "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/draft/datová-sada/kontext.jsonld",
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/2026-09-23/datová-sada/kontext.jsonld",
   "iri": "_:ds",
   "typ": "Datová sada",
   "název": { "cs": "Aktuality" },
@@ -598,7 +598,7 @@ const ISS97a = {
 };
 
 const ISS97a_EXPECTED_POST = {
-  "@context": "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/draft/datová-sada/kontext.jsonld",
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/2026-09-23/datová-sada/kontext.jsonld",
   "iri": "https://data.gov.cz/zdroj/datové-sady/MDopravy/154129471",
   "typ": "Datová sada",
   "název": { "cs": "Faktury CENDIS 2016" },
@@ -1101,7 +1101,7 @@ const HVD_20240619 = {
 };
 
 const HVD_20240619_EXPECTED_POST = {
-  "@context": "https://ofn.gov.cz/dcat-ap-cz-hvd/draft/datová-sada/kontext.jsonld",
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-hvd/2026-09-23/datová-sada/kontext.jsonld",
   "iri": "https://data.gov.cz/zdroj/datové-sady/17651921/e9a7f9d0e1f3bbc6957233048ab1bd7a",
   "typ": "Datová sada",
   "název": { "cs": "HVD1", "en": "HVD1" },
@@ -1219,7 +1219,7 @@ test("HVD_20240619 from json-ld and back for POST.", () => {
  * - Removed en label for contact point, we do not support it.
  */
 const DATOVE_ROZHRANI = {
-  "@context": "https://ofn.gov.cz/dcat-ap-cz-datová-rozhraní/draft/datová-sada/kontext.jsonld",
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-datová-rozhraní/2026-09-23/datová-sada/kontext.jsonld",
   "iri": "https://data.gov.cz/lkod/mdcr/datové-sady/vld",
   "typ": ["Datová sada", "Datová sada SSP"],
   "název": {

@@ -7,7 +7,7 @@
     <h2 class="headline">
       {{ $t('headline_distribution_license') }}
       <a
-        href="https://data.gov.cz/pro-poskytovatele/otevřená-data/stanovení-podmínek-užití/"
+        href="https://data.gov.cz/otevřená-data/pro-poskytovatele/stanovení-podmínek-užití/"
         target="_blank"
         class="info_link"
       >

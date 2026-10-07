@@ -1,7 +1,8 @@
 <template>
   <v-dialog
-    v-model="visible"
+    :value="visible"
     width="500"
+    @input="onInput"
   >
     <v-card>
       <v-toolbar
@@ -19,6 +20,18 @@
           <v-icon>close</v-icon>
         </v-btn>
       </v-toolbar>
+      <v-card-text class="pt-6">
+        {{ $t('cant_import_dataset') }}
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          text
+          @click="close"
+        >
+          {{ $t('import_dialog_failed_close') }}
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -32,6 +45,15 @@ export default {
   "methods": {
     "close": function () {
       this.$emit("close");
+    },
+    /**
+     * Called when the dialog is closed from outside, e.g. by the escape key.
+     * @param {boolean} value
+     */
+    "onInput": function (value) {
+      if (!value) {
+        this.close();
+      }
     },
   },
 };

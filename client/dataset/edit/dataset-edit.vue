@@ -8,6 +8,10 @@
       @load-from-file="loadFromFile"
       @load-from-url="loadFromUrl"
     />
+    <app-upload-failed-dialog
+      :visible="ui.uploadFailedVisible"
+      @close="uploadFailedClose"
+    />
   </v-main>
   <v-main v-else-if="data.status === 'loading'">
     <!-- We do not use loading indicator as of now. -->
@@ -108,10 +112,6 @@
         @input="onStepperInput"
       />
     </div>
-    <app-upload-failed-dialog
-      :visible="ui.uploadFailedVisible"
-      @close="uploadFailedClose"
-    />
   </v-main>
   <v-main v-else-if="data.status === 'error'">
     <app-import-failed :message="$t('cant_import_dataset')" />

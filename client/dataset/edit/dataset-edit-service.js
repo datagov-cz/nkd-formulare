@@ -122,6 +122,7 @@ export async function onDatasetEditMounted(component) {
   } catch (ex) {
     console.error("Can't create dataset.", ex);
     component.data.status = "error";
+    return;
   }
 
   //
@@ -438,6 +439,7 @@ function loadFile(file) {
         reject(ex);
       }
     };
+    reader.onerror = () => reject(reader.error);
     reader.readAsText(file);
   });
 }

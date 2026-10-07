@@ -65,6 +65,7 @@ import CatalogEdit from "./catalog-edit-record";
 import ExportSummary from "./catalog-export-summary";
 import StepperNavigationMobile from "./components/step-navigation-mobile";
 import StepperNavigationDesktop from "./components/step-navigation-desktop";
+import ImportFailed from "../../app-service/import-failed";
 import {isCatalogValid} from "../catalog-model";
 import {
   onRouteChange,
@@ -79,6 +80,7 @@ export default {
     "app-step-navigation-desktop": StepperNavigationDesktop,
     "app-catalog" : CatalogEdit,
     "app-export": ExportSummary,
+    "app-import-failed": ImportFailed,
   },
   "data": () => ({
     "data": {

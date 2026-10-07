@@ -13,8 +13,13 @@ async function loadDataset(component) {
   // We first try to load from a POST data.
   const serverFormData = getFormData();
   if (serverFormData !== undefined) {
-    await loadDatasetFromServerData(component, serverFormData);
-    component.status = "ready";
+    try {
+      await loadDatasetFromServerData(component, serverFormData);
+      component.status = "ready";
+    } catch (ex) {
+      console.error("Can't import dataset.", ex);
+      component.status = "error";
+    }
     return;
   }
   // Next we try to load from a URL query.

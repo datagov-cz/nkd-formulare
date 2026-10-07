@@ -12,8 +12,13 @@ async function loadCatalog(component) {
   // We first try to load from a POST data.
   const serverFormData = getFormData();
   if (serverFormData !== undefined) {
-    await loadCatalogFromServerData(component, serverFormData);
-    component.status = "ready";
+    try {
+      await loadCatalogFromServerData(component, serverFormData);
+      component.status = "ready";
+    } catch (error) {
+      console.error("Can't import catalog.", error);
+      component.status = "error";
+    }
     return;
   }
   // Next we try to load from a URL query.

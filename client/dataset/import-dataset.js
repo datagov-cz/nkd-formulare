@@ -31,7 +31,7 @@ import {
   MODE_HVD,
   MODE_NON_PUBLIC,
   includesHvdLegislation,
-  filterHvdLegislation,
+  filterImplicitLegislation,
   includesNonPublicLegislation,
   filterNonPublicLegislation,
 } from "./dataset-model";
@@ -144,8 +144,8 @@ function loadDataset(flatJsonLd, entity, defaultLanguage) {
   let mode = MODE_OPEN_DATA;
   if (includesHvdLegislation(legislation)) {
     mode = MODE_HVD;
-    legislation = filterHvdLegislation(legislation);
   }
+  legislation = filterImplicitLegislation(legislation);
   if (includesNonPublicLegislation(legislation)) {
     mode = MODE_NON_PUBLIC;
     legislation = filterNonPublicLegislation(legislation);
@@ -415,9 +415,7 @@ function loadDistribution(flatJsonLd, entity, defaultLanguage) {
 
   let legislation = getValues(entity, EUROPE.applicableLegislation);
   const isHvd = includesHvdLegislation(legislation);
-  if (isHvd) {
-    legislation = filterHvdLegislation(legislation);
-  }
+  legislation = filterImplicitLegislation(legislation);
 
   const distribution = {
     ...createDistribution(),

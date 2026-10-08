@@ -24,10 +24,11 @@ export function includesHvdLegislation(legislation) {
 }
 
 /**
+ * Remove legislation added automatically on export based on the mode.
  * @param {string[]} legislation
  * @returns {string[]}
  */
-export function filterHvdLegislation(legislation) {
+export function filterImplicitLegislation(legislation) {
   return legislation.filter(iri =>
     iri !== EUROPE.hvd && iri !== EUROPE.openData);
 }

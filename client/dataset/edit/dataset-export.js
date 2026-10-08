@@ -185,7 +185,8 @@ function exportDatasetToJsonLd(
   }
 
   if (dataset.legislation.length > 0 || legislation.length > 0) {
-    result["právní_předpis"] = [...legislation, ...dataset.legislation];
+    result["právní_předpis"] =
+      normalizeLegislation([...legislation, ...dataset.legislation]);
   }
 
   if (dataset.hvd_categories.length > 0) {
@@ -414,6 +415,12 @@ function exportDistribution(
     result["právní_předpis"].push(...distribution.legislation);
   }
 
+  if (result["právní_předpis"].length > 0) {
+    result["právní_předpis"] = normalizeLegislation(result["právní_předpis"]);
+  } else {
+    delete result["právní_předpis"];
+  }
+
   if (distribution.type === DIST_TYPE_FILE) {
     addFileDistribution(distribution, result);
   } else if (distribution.type === DIST_TYPE_SERVICE) {
@@ -423,6 +430,15 @@ function exportDistribution(
   }
 
   return result;
+}
+
+/**
+ * Remove duplicities and sort, so the output is stable.
+ * @param {string[]} legislation
+ * @returns {string[]}
+ */
+function normalizeLegislation(legislation) {
+  return [...new Set(legislation)].sort();
 }
 
 /**
@@ -583,7 +599,9 @@ function addDataService(
   // Some values are a copy from the distribution.
 
   service["název"] = parent["název"];
-  service["právní_předpis"] = parent["právní_předpis"];
+  if (parent["právní_předpis"] !== undefined) {
+    service["právní_předpis"] = parent["právní_předpis"];
+  }
 
   // We need to store some values to the parent object.
 

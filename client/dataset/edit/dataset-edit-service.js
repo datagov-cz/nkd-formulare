@@ -22,10 +22,12 @@ import { postForm } from "../../app-service/http";
 import { fetchCodelistLabels } from "../codelist";
 
 export function onRouteChange(component, location) {
+  const mode = parseUrlMode(location.query);
 
   // Enable navigation back to the mode selection screen.
-  const mode = parseUrlMode(location.query);
-  if (component.userSelectedModel && mode === null) {
+  // So if the mode has been determined by user action (select or file upload)
+  // and there are no query arguments - we are back to the select page.
+  if (component.userSelectedModel && Object.keys(location.query).length === 0) {
     component.data.status = "select-mode";
     return;
   }
@@ -105,7 +107,7 @@ export async function onDatasetEditMounted(component) {
       next = await copyDatasetByUrl(
         query.copyFromDataset, language, query.isLocalCatalog);
     } else if (isNotEmpty(query.file)) {
-      next = await importFromFile(
+      next = await importFromByUrl(
         query.file, language, query.isLocalCatalog);
     } else {
       // We have no information about the dataset.
@@ -177,44 +179,12 @@ function isNotEmpty(value) {
   return value !== undefined && value !== null && value.length > 0;
 }
 
-async function importDatasetByUrl(url, language) {
-  const data = await importDatasetFromUrlWithDereference(url, language);
-  return {
-    "exportOptions": {
-      "allowEdit": true,
-      "type": EXPORT_EDIT,
-    },
-    "dataset": data.dataset,
-    "distributions": data.distributions,
-  };
-}
-
-async function copyDatasetByUrl(url, language, lkod) {
-  const data = await importDatasetFromUrlWithDereference(url, language);
-  return {
-    "exportOptions": {
-      "allowEdit": true,
-      "type": lkod ? EXPORT_LKOD : EXPORT_NKOD,
-    },
-    "dataset": data.dataset,
-    "distributions": data.distributions,
-  };
-}
-
-async function importFromFile(url, language, lkod) {
-  const data = await importDatasetFromUrl(url, language);
-  // As we create new item we can get rid of the dataset IRI.
-  data.dataset.iri = "";
-  return {
-    "exportOptions": {
-      "type": lkod ? EXPORT_LKOD : EXPORT_NKOD,
-      "allowEdit": false,
-    },
-    "dataset": data.dataset,
-    "distributions": data.distributions,
-  };
-}
-
+/**
+ * Import dataset from data provided by the sever.
+ *
+ * @param {"cs" | "en"} language
+ * @param {*} serverFormData
+ */
 async function importFromPostData(language, serverFormData) {
   const data = await importFromJsonLd(serverFormData, language);
   return {
@@ -228,9 +198,71 @@ async function importFromPostData(language, serverFormData) {
 }
 
 /**
+ * Import dataset based on it's URL.
+ * By using dereference this loads data from URL endpoint.
+ *
+ * @param {string} url
+ * @param {"cs" | "en"} language
+ */
+async function importDatasetByUrl(url, language) {
+  const data = await importDatasetFromUrlWithDereference(url, language);
+  return {
+    "exportOptions": {
+      "allowEdit": true,
+      "type": EXPORT_EDIT,
+    },
+    "dataset": data.dataset,
+    "distributions": data.distributions,
+  };
+}
+
+/**
+ * Import the same was as {@link importDatasetByUrl}.
+ * But set type based on the lkod flag.
+ *
+ * @param {string} url
+ * @param {"cs" | "en"} language
+ * @param {boolean} lkod
+ * @returns
+ */
+async function copyDatasetByUrl(url, language, lkod) {
+  const data = await importDatasetFromUrlWithDereference(url, language);
+  return {
+    "exportOptions": {
+      "allowEdit": true,
+      "type": lkod ? EXPORT_LKOD : EXPORT_NKOD,
+    },
+    "dataset": data.dataset,
+    "distributions": data.distributions,
+  };
+}
+
+/**
+ * Import dataset from the URL without using a dereference.
+ * This should be used to import files with URLs.
+ *
+ * @param {string} url
+ * @param {string} language
+ * @param {boolean} lkod
+ * @returns
+ */
+async function importFromByUrl(url, language, lkod) {
+  const data = await importDatasetFromUrl(url, language);
+  // As we create new item we can get rid of the dataset IRI.
+  data.dataset.iri = "";
+  return {
+    "exportOptions": {
+      "type": lkod ? EXPORT_LKOD : EXPORT_NKOD,
+      "allowEdit": false,
+    },
+    "dataset": data.dataset,
+    "distributions": data.distributions,
+  };
+}
+
+/**
  * @param {boolean} isLocalCatalog
  * @param {"default" | "non-public" | "hvd"} mode
- * @returns
  */
 function createEmptyDataset(isLocalCatalog, mode) {
   return {
@@ -244,7 +276,6 @@ function createEmptyDataset(isLocalCatalog, mode) {
 }
 
 function initializeWithData(component, query, next) {
-
   component.exportOptions = {
     ...component.exportOptions,
     ...next.exportOptions,
@@ -254,13 +285,18 @@ function initializeWithData(component, query, next) {
 
   setDataToComponent(component, next.dataset, next.distributions);
 
-  // Update page title.
-  document.title = component.$t(getPageTitle(
-    component.data.dataset, component.exportOptions.type));
-
-  initializeStepper(component);
+  // Initialize stepper based on the URL as the URL could point to different
+  // step then the initial one.
+  if (component.$route.query.krok) {
+    const step = parseInt(component.$route.query.krok, 10);
+    component.ui.step = step;
+    onStepperInput(component, step);
+  }
 }
 
+/**
+ * Called when a dataset and distributions are ready to be set to the component.
+ */
 function setDataToComponent(component, dataset, distributions) {
   component.data.dataset = dataset;
   component.data.distributions = distributions;
@@ -275,6 +311,9 @@ function setDataToComponent(component, dataset, distributions) {
   component.exportOptions.publisher = component.data.dataset.publisher;
   component.exportOptions.lkodIri = component.data.dataset.iri;
   fetchCodelistLabels(dataset, distributions, component.$vuetify.lang.current);
+  // Update page title.
+  document.title = component.$t(getPageTitle(
+    component.data.dataset, component.exportOptions.type));
   // And we are ready to edit.
   component.data.status = "ready";
 }
@@ -292,14 +331,6 @@ function getPageTitle(dataset, exportType) {
       }
     case EXPORT_LKOD:
       return "edit_page_title_new_lkod";
-  }
-}
-
-function initializeStepper(component) {
-  if (component.$route.query.krok) {
-    const step = parseInt(component.$route.query.krok, 10);
-    component.ui.step = step;
-    onStepperInput(component, step);
   }
 }
 
@@ -413,6 +444,9 @@ export function onDeleteDistribution(component) {
     component.data.distributions.length - 1);
 }
 
+/**
+ * Handles action when user requests loading a dataset from a local file.
+ */
 export async function onLoadFromFile(component, file) {
   try {
     const content = await loadFile(file);
@@ -427,6 +461,7 @@ export async function onLoadFromFile(component, file) {
 
 /**
  * @param {File} file
+ * @returns Content of the file as a string.
  */
 function loadFile(file) {
   return new Promise((resolve, reject) => {
@@ -444,6 +479,9 @@ function loadFile(file) {
   });
 }
 
+/**
+ * Handles action when user requests loading a dataset from a URL.
+ */
 export async function onLoadFromUrl(component, url) {
   try {
     const data = await importDatasetFromUrl(

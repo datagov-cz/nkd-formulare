@@ -1,0 +1,50 @@
+export default {
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/draft/datová-sada/kontext.jsonld",
+  "iri": "https://local-publisher",
+  "typ": "Datová sada",
+  "název": { "cs": "aaabbb" },
+  "popis": { "cs": "bbb" },
+  "klíčové_slovo": { "cs": ["cccs"], "en": ["en"] },
+  "periodicita_aktualizace": "http://publications.europa.eu/resource/authority/frequency/MONTHLY",
+  "prvek_rúian": ["https://linked.cuzk.cz/resource/ruian/stat/1"],
+  "právní_předpis": ["http://data.europa.eu/eli/dir/2019/1024/oj"],
+  "téma": ["http://publications.europa.eu/resource/authority/data-theme/ENER"],
+  "poskytovatel": "https://data.gov.cz/zdroj/ovm/66003008",
+  "kontaktní_bod": {
+    "typ": "Organizace",
+    "jméno": { "cs": "Pavel" },
+    "e-mail": "mailto:pavel@email.cz",
+  },
+  "distribuce": [{
+    "iri": "https://local-publisher/distribuce/0",
+    "typ": "Distribuce",
+    "název": {
+      "cs": "Moje webservica",
+      "en": "my webservice",
+    },
+    "přístupové_url": "https://url.cz",
+    "právní_předpis": ["http://data.europa.eu/eli/dir/2019/1024/oj"],
+    "přístupová_služba": {
+      "iri": "https://local-publisher/distribuce/0/přístupová-služba",
+      "typ": "Datová služba",
+      "přístupový_bod": "https://url.cz",
+      "popis_přístupového_bodu": "https://popis.url",
+      "právní_předpis": ["http://data.europa.eu/eli/dir/2019/1024/oj"],
+      "název": {
+        "cs": "Moje webservica",
+        "en": "my webservice",
+      },
+      "specifikace": ["https://ofn.gov.cz/kontakty/2020-07-01/"],
+    },
+    "podmínky_užití": {
+      "typ": "Specifikace podmínek užití",
+      "autorské_dílo": "https://creativecommons.org/licenses/by/4.0/",
+      "autor": {
+        "cs": "Zelenka",
+      },
+      "databáze_jako_autorské_dílo": "https://data.gov.cz/podmínky-užití/není-autorskoprávně-chráněnou-databází/",
+      "databáze_chráněná_zvláštními_právy": "https://data.gov.cz/podmínky-užití/není-chráněna-zvláštním-právem-pořizovatele-databáze/",
+      "osobní_údaje": "https://data.gov.cz/podmínky-užití/neobsahuje-osobní-údaje/",
+    },
+  }],
+}

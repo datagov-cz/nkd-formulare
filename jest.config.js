@@ -21,6 +21,7 @@ module.exports = {
   "roots": [
     "client",
     "server",
+    "test-suite",
   ],
   "globals" :{
     "window": {},

@@ -1,13 +1,3 @@
-import { ESBIRKA } from "../../../app-service/vocabulary";
-
-export const NON_PUBLIC_LEGISLATION = [
-  ESBIRKA["2000/365/2024-01-20"],
-  ESBIRKA["360/2024-07-01"],
-  ESBIRKA["2026/60/2026-05-27"],
-];
-
-
-
 /**
  * https://data.gov.cz/datová-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatové-sady%2F17651921%2F44f48b721921b0b1ea6b42fcd9f865f6
  * @type {{value: string, cs: string, en: string}[]}

@@ -7,12 +7,77 @@ import {
   temporal,
   url,
 } from "../app-service/validators";
-import { EUROPE } from "../app-service/vocabulary";
-import { NON_PUBLIC_LEGISLATION } from "./edit/codelists/non-public";
+import { ESBIRKA, EUROPE } from "../app-service/vocabulary";
 
 //
-// Section : High Value Dataset (HVD)
+// Section : Type definitions.
 //
+
+/**
+ * @typedef {object} Dataset
+ * @property {"default" | "hvd" | "non-public"} mode Determined dataset type.
+ * @property {string | undefined} iri
+ * @property {string} title_cs
+ * @property {string} title_en
+ * @property {string} description_cs
+ * @property {string} description_en
+ * @property {string} accrual_periodicity
+ * @property {{url: string, type: string}[]} spatial
+ * @property {string} temporal_start
+ * @property {string} temporal_end
+ * @property {string} temporal_resolution
+ * @property {string} spatial_resolution_meters
+ * @property {string} documentation
+ * @property {string[]} dataset_themes
+ * @property {string[]} legislation
+ * @property {string[]} dataset_custom_themes
+ * @property {string[]} themes
+ * @property {string[]} ofn
+ * @property {string} contact_point_name
+ * @property {string} contact_point_email
+ * @property {string[]} keywords_cs
+ * @property {string[]} keywords_en
+ * @property {string} url_to_load_from
+ * @property {string} ruian
+ * @property {string} ruian_type
+ * @property {string | undefined} publisher
+ * @property {string} landing_page
+ * @property {string[]} hvd_categories
+ * @property {string} isvs
+ * @property {string[]} related_terms
+ * @property {{force: boolean} | {}} $validators
+ */
+
+
+/**
+ * Performs migration of the legislation and removes all legislation fields
+ * that are added by the forms. This method should be called when importing
+ * legislation.
+ *
+ * @param {string[]} legislation
+ */
+export function loadImplicitLegislation(legislation) {
+  const migration = {
+    [ESBIRKA.NORM_2024_01_01_1_5A_1] : ESBIRKA.NORM_2025_08_19_1_5A_1,
+    [ESBIRKA.NORM_2024_01_011_3A_6] : ESBIRKA.NORM_2025_08_19_1_3A_6,
+  };
+  const migrated = legislation.map(iri => migration[iri] ?? iri);
+
+  /** @type string[] Legislation to remove on import. */
+  const blackList = [
+    // HVD
+    ESBIRKA.SB_1999_106_2025_08_19,
+    ESBIRKA.NORM_1_5B,
+    EUROPE.REG_2023_138_oj,
+    // NON-PUBLIC
+    ESBIRKA.SB_2026_60_2026_05_27,
+    ESBIRKA.SB_2000_365_2026_01_01,
+    ESBIRKA.SB_2023_360_2024_07_01,
+    // OPEN-DATA
+    ESBIRKA.SB_1999_106_2025_08_19,
+  ];
+  return migrated.filter(iri => !blackList.includes(iri));
+}
 
 /**
  * @param {string[]} legislation
@@ -20,43 +85,20 @@ import { NON_PUBLIC_LEGISLATION } from "./edit/codelists/non-public";
  */
 export function includesHvdLegislation(legislation) {
   // We require only EUROPE.hvd for backwards compatibility.
-  return legislation.includes(EUROPE.hvd);
+  return legislation.includes(EUROPE.REG_2023_138_oj);
 }
-
-/**
- * Remove legislation added automatically on export based on the mode.
- * @param {string[]} legislation
- * @returns {string[]}
- */
-export function filterImplicitLegislation(legislation) {
-  return legislation.filter(iri =>
-    iri !== EUROPE.hvd && iri !== EUROPE.openData);
-}
-
-//
-// Section : Non-Public Dataset
-//
 
 /**
  * @param {string[]} legislation
  * @returns {boolean}
  */
 export function includesNonPublicLegislation(legislation) {
-  return NON_PUBLIC_LEGISLATION.every(iri => legislation.includes(iri));
-}
-
-/**
- * @param {string[]} legislation
- * @returns {string[]}
- */
-export function filterNonPublicLegislation(legislation) {
-  return legislation.filter(iri => !NON_PUBLIC_LEGISLATION.includes(iri));
+  return legislation.includes(ESBIRKA.SB_2026_60_2026_05_27);
 }
 
 //
 //
 //
-
 
 export const SPATIAL_RUIAN = "RUIAN";
 
@@ -95,6 +137,7 @@ export const MODE_NON_PUBLIC = "non-public";
 
 /**
  * @param {"default" | "hvd" | "non-public"} mode
+ * @returns {Dataset}
  */
 export function createDataset(mode) {
   return {

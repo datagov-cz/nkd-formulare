@@ -31,9 +31,8 @@ import {
   MODE_HVD,
   MODE_NON_PUBLIC,
   includesHvdLegislation,
-  filterImplicitLegislation,
+  loadImplicitLegislation,
   includesNonPublicLegislation,
-  filterNonPublicLegislation,
 } from "./dataset-model";
 import {
   isRuian,
@@ -136,7 +135,7 @@ function loadDataset(flatJsonLd, entity, defaultLanguage) {
 
   // We can use legislation to determine dataset type.
   // But in exchange we may need to filter some values out.
-  let legislation = getValues(entity, EUROPE.applicableLegislation);
+  const legislation = getValues(entity, EUROPE.applicableLegislation);
 
   /**
    * @type {typeof MODE_OPEN_DATA | typeof MODE_HVD | typeof MODE_NON_PUBLIC}
@@ -145,10 +144,8 @@ function loadDataset(flatJsonLd, entity, defaultLanguage) {
   if (includesHvdLegislation(legislation)) {
     mode = MODE_HVD;
   }
-  legislation = filterImplicitLegislation(legislation);
   if (includesNonPublicLegislation(legislation)) {
     mode = MODE_NON_PUBLIC;
-    legislation = filterNonPublicLegislation(legislation);
   }
 
   const title = loadLanguageString(
@@ -180,7 +177,7 @@ function loadDataset(flatJsonLd, entity, defaultLanguage) {
     "documentation": getValue(entity, FOAF.page) ?? "",
     "spatial": loadSpatial(entity),
     "ofn": getValues(entity, DCTERMS.conformsTo) || [],
-    "legislation": legislation,
+    "legislation": loadImplicitLegislation(legislation),
     "hvd_categories": getValues(entity, EUROPE.hvdCategory),
     "landing_page": getValue(entity, DCATAP.landingPage) ?? "",
     "isvs": isvs ?? "",
@@ -413,9 +410,8 @@ function loadDistribution(flatJsonLd, entity, defaultLanguage) {
 
   // Each distribution may, or may not, be HVD based on the legislation.
 
-  let legislation = getValues(entity, EUROPE.applicableLegislation);
+  const legislation = getValues(entity, EUROPE.applicableLegislation);
   const isHvd = includesHvdLegislation(legislation);
-  legislation = filterImplicitLegislation(legislation);
 
   const distribution = {
     ...createDistribution(),
@@ -432,7 +428,7 @@ function loadDistribution(flatJsonLd, entity, defaultLanguage) {
       getValue(entity, DCATAP.packageFormat) ?? "",
     "compress_format":
       getValue(entity, DCATAP.compressFormat) ?? "",
-    "legislation": legislation,
+    "legislation": loadImplicitLegislation(legislation),
     // Non Public data
     "typy_obsahu": getValues(entity,
       VOCABULARY_GOV_CZ["typ-obsahu-sdileneho-rozhranim"]),

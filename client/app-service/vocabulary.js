@@ -42,9 +42,9 @@ export const DCATAP = {
 
 export const EUROPE = {
   "applicableLegislation": "http://data.europa.eu/r5r/applicableLegislation",
-  "openData": "http://data.europa.eu/eli/dir/2019/1024/oj",
   "hvdCategory": "http://data.europa.eu/r5r/hvdCategory",
-  "hvd": "http://data.europa.eu/eli/reg_impl/2023/138/oj",
+  /** High value dataset legislation. */
+  "REG_2023_138_oj": "http://data.europa.eu/eli/reg_impl/2023/138/oj",
 };
 
 export const FOAF = {
@@ -103,40 +103,51 @@ export const STATUS = {
 const ESBIRKA_PREFIX = "https://www.e-sbirka.cz/eli/cz/sb/";
 
 export const ESBIRKA = {
-  "2026/60/2026-05-27": ESBIRKA_PREFIX + "2026/60/2026-05-27",
-  "2000/365/2024-01-20": ESBIRKA_PREFIX + "2000/365/2024-01-20",
-  "360/2024-07-01": ESBIRKA_PREFIX + "2023/360/2024-07-01",
-  "DYNAMIC_DATA": ESBIRKA_PREFIX + "1999/106/2024-01-01/dokument/norma/cast_1/par_3a/odst_6",
-  "PUBLIC_REGISTERS": ESBIRKA_PREFIX + "1999/106/2024-01-01/dokument/norma/cast_1/par_5a/odst_1",
+  /** Open data. */
+  "SB_1999_106_2025_08_19": ESBIRKA_PREFIX + "1999/106/2025-08-19",
+  /** Dynamic data - obsolete. */
+  "NORM_2024_01_011_3A_6": ESBIRKA_PREFIX + "1999/106/2024-01-01/dokument/norma/cast_1/par_3a/odst_6",
+  /** Dynamic data. */
+  "NORM_2025_08_19_1_3A_6": ESBIRKA_PREFIX + "1999/106/2025-08-19/dokument/norma/cast_1/par_3a/odst_6",
+  /** Data from a public registry - obsolete. */
+  "NORM_2024_01_01_1_5A_1": ESBIRKA_PREFIX + "1999/106/2024-01-01/dokument/norma/cast_1/par_5a/odst_1",
+  /** Data from a public registry. */
+  "NORM_2025_08_19_1_5A_1": ESBIRKA_PREFIX + "1999/106/2025-08-19/dokument/norma/cast_1/par_5a/odst_1",
+  /** High value dataset - use only for a dataset. */
+  "NORM_1_5B": ESBIRKA_PREFIX + "1999/106/2025-08-19/dokument/norma/cast_1/par_5b",
+  /** Non-public. */
+  "SB_2026_60_2026_05_27": ESBIRKA_PREFIX + "2026/60/2026-05-27",
+  /** Non-public - secondary for distribution / data service only. */
+  "SB_2000_365_2026_01_01": ESBIRKA_PREFIX + "2000/365/2026-01-01",
+  /** Non-public - secondary for distribution / data service only. */
+  "SB_2023_360_2024_07_01": ESBIRKA_PREFIX + "2023/360/2024-07-01",
+
+  // https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_3a/odst_6
 };
 
-const LEGISLATION_360_2023 =
-  "https://slovník.gov.cz/legislativní/sbírka/360/2023/pojem/";
-
-const LEGISLATION_365_2000 =
-  "https://slovník.gov.cz/legislativní/sbírka/365/2000/pojem/";
+const VOCABULARY_GOV_CZ_PREFIX = "https://slovník.gov.cz/legislativní/sbírka/";
 
 export const VOCABULARY_GOV_CZ = {
   "tyka-se-pojmu":
     "https://slovník.gov.cz/veřejný-sektor/pojem/týká-se-pojmu",
   "zahrnuje":
-    LEGISLATION_365_2000 + "zahrnuje",
+    VOCABULARY_GOV_CZ_PREFIX + "365/2000/pojem/zahrnuje",
   "typ-obsahu-sdileneho-rozhranim":
-    LEGISLATION_360_2023 + "má-typ-obsahu-sdíleného-rozhraním",
+    VOCABULARY_GOV_CZ_PREFIX + "360/2023/pojem/má-typ-obsahu-sdíleného-rozhraním",
   "zpusob-sdileni-rozhranim":
-    LEGISLATION_360_2023 + "má-způsob-sdílení-rozhraním",
+    VOCABULARY_GOV_CZ_PREFIX + "360/2023/pojem/má-způsob-sdílení-rozhraním",
   "zpusob-ziskani-dat-sdilenych-rozhranim":
-    LEGISLATION_360_2023 + "má-způsob-získání-dat-sdílených-rozhraním",
+    VOCABULARY_GOV_CZ_PREFIX + "360/2023/pojem/má-způsob-získání-dat-sdílených-rozhraním",
   "zprostredkovava-sdileni":
-    LEGISLATION_360_2023 + "zprostředkovává-sdílení",
+    VOCABULARY_GOV_CZ_PREFIX + "360/2023/pojem/zprostředkovává-sdílení",
   "sdilen-jako":
-    LEGISLATION_360_2023 + "je-sdílen-jako",
+    VOCABULARY_GOV_CZ_PREFIX + "360/2023/pojem/je-sdílen-jako",
   "sdilen-zpusobem":
-    LEGISLATION_360_2023 + "je-sdílen-způsobem",
+    VOCABULARY_GOV_CZ_PREFIX + "360/2023/pojem/je-sdílen-způsobem",
   "ziskan-zpusobem":
-    LEGISLATION_360_2023 + "je-získán-způsobem",
+    VOCABULARY_GOV_CZ_PREFIX + "360/2023/pojem/je-získán-způsobem",
   "odpovidajici-pojem":
-    LEGISLATION_360_2023 + "odpovídající-pojem",
+    VOCABULARY_GOV_CZ_PREFIX + "360/2023/pojem/odpovídající-pojem",
   "je-sdilen-jako":
-    LEGISLATION_360_2023 + "je-sdílen-jako",
+    VOCABULARY_GOV_CZ_PREFIX + "360/2023/pojem/je-sdílen-jako",
 };

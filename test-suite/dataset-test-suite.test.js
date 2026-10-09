@@ -1,5 +1,7 @@
 /* eslint max-len: 0 */
-import {test} from "@jest/globals";
+import { describe, test, expect } from "@jest/globals";
+import fs from "fs";
+import path from "path";
 
 import { importFromJsonLd } from "../client/dataset/import-dataset.js";
 import {
@@ -8,100 +10,86 @@ import {
   exportDatasetForPost,
 } from "../client/dataset/edit/dataset-export.js";
 
-/** Hight Value Dataset, Dynamic Data */
-import D_20261008_BYLANY from "./data/20261008-bylany.js";
-import D_20261008_BYLANY_NKOD from "./data/20261008-bylany.nkod.js";
-import D_20261008_BYLANY_LKOD from "./data/20261008-bylany.lkod.js";
-import D_20261008_BYLANY_POST from "./data/20261008-bylany.post.js";
+describe("dataset", () => {
 
-/** OpenData, Data Service */
-import D_20261008_ISS94 from "./data/20261008-iss94.js";
-import D_20261008_ISS94_LKOD from "./data/20261008-iss94.lkod.js";
-
-/** OpenData */
-import D_20261008_ISS95 from "./data/20261008-iss95.js";
-import D_20261008_ISS95_NKOD from "./data/20261008-iss95.nkod.js";
-
-/** OpenData */
-import D_20261008_ISS97A from "./data/20261008-iss97a.js";
-import D_20261008_ISS97A_NKOD from "./data/20261008-iss97a.post.js";
-
-/** OpenData, Hight Value Dataset */
-import D_20261008_HVD from "./data/20261008-hvd.js";
-import D_20261008_HVD_NKOD from "./data/20261008-hvd.post.js";
-
-/**
- * Modified example from:
- *   https://ofn.gov.cz/dcat-ap-cz-datová-rozhraní/draft/cs/
- * Modifications:
- * - Shorthand URL expanded to work as input / output.
- * - Removed en label for contact point, we do not support it.
- */
-import DATA_20261008_DATA_INTERFACE from "./data/20261008-data-interface.js";
-
-test("20261008 Bylany to NKD.", () => {
-  return importFromJsonLd(D_20261008_BYLANY, "cs").then(data => {
-    const actual = exportDatasetForNationalDataCatalog(
-      data.dataset, data.distributions);
-    expect(actual).toEqual(D_20261008_BYLANY_NKOD);
-  });
-});
-
-test("20261008 Bylany to LKOD", () => {
-  return importFromJsonLd(D_20261008_BYLANY, "cs").then(data => {
-    const actual = exportDatasetForLocalDataCatalog(
-      data.dataset, data.distributions, {
-      "lkodIri": "https://data.gov.cz/datové-sady",
-      "publisher": "https://data.gov.cz/zdroj/ovm",
+  test("od-dyn nkod", () => {
+    const input = loadJson("./data/od-dyn/2024-nkod.jsonld");
+    const expected = loadJson("./data/od-dyn/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
     });
-    expect(actual).toEqual(D_20261008_BYLANY_LKOD);
   });
-});
 
-test("20261008 Bylany to POST.", () => {
-  return importFromJsonLd(D_20261008_BYLANY, "cs").then(data => {
-    const actual = exportDatasetForPost(data.dataset, data.distributions);
-    expect(actual).toEqual(D_20261008_BYLANY_POST);
-  });
-});
+  /**
+   * @param {string} file Path relative to this directory.
+   */
+  function loadJson(file) {
+    return JSON.parse(fs.readFileSync(path.join(__dirname, file), "utf-8"));
+  }
 
-test("20261008 ISS94 to LKOD.", () => {
-  return importFromJsonLd(D_20261008_ISS94, "cs").then(data => {
-    const actual = exportDatasetForLocalDataCatalog(
-      data.dataset, data.distributions, {
-      "lkodIri": "https://local-publisher",
+  test("od-hvd nkod", () => {
+    const input = loadJson("./data/od-hvd/2024-nkod.jsonld");
+    const expected = loadJson("./data/od-hvd/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
     });
-    console.log(JSON.stringify(actual, null, 2));
-    expect(actual).toEqual(D_20261008_ISS94_LKOD);
   });
-});
 
-test("20261008 ISS95 to NKD.", () => {
-  return importFromJsonLd(D_20261008_ISS95, "cs").then(data => {
-    const actual = exportDatasetForNationalDataCatalog(
-      data.dataset, data.distributions);
-    expect(actual).toEqual(D_20261008_ISS95_NKOD);
+  test("od-hvd-dyn-vr nkod", () => {
+    const input = loadJson("./data/od-hvd-dyn-vr/2024-nkod.jsonld");
+    const expected = loadJson("./data/od-hvd-dyn-vr/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
   });
-});
 
-test("20261008 ISS97a to POST.", () => {
-  return importFromJsonLd(D_20261008_ISS97A, "cs").then(data => {
-    const actual = exportDatasetForPost(data.dataset, data.distributions);
-    expect(actual).toEqual(D_20261008_ISS97A_NKOD);
+  test("od-min lkod", () => {
+    const input = loadJson("./data/od-min/2024-lkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-lkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForLocalDataCatalog(
+        data.dataset, data.distributions, {
+        lkodIri: "https://od.min.lkod.cz",
+        publisher: "https://poskytovatel.cz",
+      });
+      expect(actual).toEqual(expected);
+    });
   });
-});
 
-test("20261008 HVD_20240619 to POST.", () => {
-  return importFromJsonLd(D_20261008_HVD, "cs").then(data => {
-    const actual = exportDatasetForPost(data.dataset, data.distributions);
-    expect(actual).toEqual(D_20261008_HVD_NKOD);
+  test("od-min post", () => {
+    const input = loadJson("./data/od-min/2026-lkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-post.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForPost(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
   });
-});
 
-test("20260630 DATOVE_ROZHRANI to POST roundtrip.", () => {
-  return importFromJsonLd(DATA_20261008_DATA_INTERFACE, "cs").then(data => {
-    // We use POST as it preserves the record as is.
-    const actual = exportDatasetForPost(data.dataset, data.distributions);
-    expect(actual).toEqual(DATA_20261008_DATA_INTERFACE);
+  test("od-min nkod", () => {
+    const input = loadJson("./data/od-min/2024-nkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
   });
+
+  test("od-vr nkod", () => {
+    const input = loadJson("./data/od-vr/2024-nkod.jsonld");
+    const expected = loadJson("./data/od-vr/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
 });

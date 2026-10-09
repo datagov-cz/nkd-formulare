@@ -2,10 +2,10 @@ import {
   PU,
   CREATIVE_COMMONS,
   EUROPE,
+  ESBIRKA,
 } from "../../app-service/vocabulary";
 import { DIST_TYPE_FILE, DIST_TYPE_SERVICE } from "../distribution-model";
 import {
-  includesHvdLegislation,
   MODE_HVD,
   MODE_NON_PUBLIC,
   MODE_OPEN_DATA,
@@ -15,21 +15,15 @@ import {
   SPATIAL_RUIAN,
   SPATIAL_URL,
 } from "../dataset-model";
-import { NON_PUBLIC_LEGISLATION } from "./codelists/non-public";
-
-const CONTEXT_DEFAULT =
-  "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/draft/datová-sada/kontext.jsonld";
-
-const CONTEXT_HVD =
-  "https://ofn.gov.cz/dcat-ap-cz-hvd/draft/datová-sada/kontext.jsonld";
-
-const CONTEXT_NON_PUBLIC =
-  "https://ofn.gov.cz/dcat-ap-cz-datová-rozhraní/draft/datová-sada/kontext.jsonld";
+import { zpusobySdileniUdaju } from "./codelists/non-public";
 
 /**
- * Set all nodes as blank nodes and remove publisher.
- * @param {*} dataset
- * @param {*[]} distributions
+ * Export a dataset so it can be send to the National Data Catalog.
+ * All IRIs as set to be blank nodes.
+ * Information about the publisher is removed.
+ *
+ * @param {import("../dataset-model").Dataset} dataset
+ * @param {import("../distribution-model").Distribution[]} distributions
  */
 export function exportDatasetForNationalDataCatalog(dataset, distributions) {
   // Create a copy so we do not modify the inputs.
@@ -49,9 +43,11 @@ export function exportDatasetForNationalDataCatalog(dataset, distributions) {
 }
 
 /**
+ * Export a dataset so it can be used in a Local Data Catalog.
  * Use IRIs from export options or try to preserve IRIs from the dataset.
- * @param {*} dataset
- * @param {*[]} distributions
+ *
+ * @param {import("../dataset-model").Dataset} dataset
+ * @param {import("../distribution-model").Distribution[]} distributions
  * @param {{lkodIri?: string, publisher?: string}} options
  */
 export function exportDatasetForLocalDataCatalog(
@@ -91,8 +87,8 @@ export function exportDatasetForLocalDataCatalog(
 /**
  * Export data for POST, in this case we want to preserve IRIs where possible.
  * Without a change this should produce the same output as was input for import.
- * @param {*} dataset
- * @param {*[]} distributions
+ * @param {import("../dataset-model").Dataset} dataset
+ * @param {import("../distribution-model").Distribution[]} distributions
  */
 export function exportDatasetForPost(dataset, distributions) {
   // Create a copy so we do not modify the inputs.
@@ -100,57 +96,32 @@ export function exportDatasetForPost(dataset, distributions) {
 
   // Use existing or nothing (blank nodes).
 
-  const selectDistributionIri = (distribution) =>
-    distribution.iri ?? undefined;
+  const selectDistributionIri =
+    (/** @type {{ iri: string; }} */distribution) =>
+      distribution.iri ?? undefined;
 
-  const selectServiceIri = (distribution) =>
-    distribution.service_iri ?? undefined;
+  const selectServiceIri =
+    (/** @type {{ service_iri: string; }} */ distribution) =>
+      distribution.service_iri ?? undefined;
 
   return exportDatasetToJsonLd(
     dataset, distributions, selectDistributionIri, selectServiceIri);
 }
 
 /**
- * @param {*} dataset
- * @param {*[]} distributions
- * @param {(distribution: *, index: number) => ?string | undefined} distributionIri
+ * @param {import("../dataset-model").Dataset} dataset
+ * @param {import("../distribution-model").Distribution[]} distributions
+ * @param {(distribution: import("../distribution-model").Distribution, index: number) => ?string | undefined} distributionIri
  * @param {(service: *, distribution: string) => string | undefined} serviceIri
- * @returns
  */
 function exportDatasetToJsonLd(
   dataset, distributions, distributionIri, serviceIri) {
 
-  // We start by deciding dataset type.
-
-  const { context, legislation, type } = (() => {
-    switch (dataset.mode) {
-    case MODE_HVD:
-      return {
-        "context": CONTEXT_HVD,
-        "legislation": [EUROPE.openData, EUROPE.hvd],
-        "type": "Datová sada",
-      };
-    case MODE_NON_PUBLIC:
-      return {
-        "context": CONTEXT_NON_PUBLIC,
-        "legislation": [...NON_PUBLIC_LEGISLATION],
-        "type": ["Datová sada", "Datová sada SSP"],
-      };
-    case MODE_OPEN_DATA:
-    default:
-      return {
-        "context": CONTEXT_DEFAULT,
-        "legislation": [EUROPE.openData],
-        "type": "Datová sada",
-      };
-    }
-  })();
-
   /** @type * */
   const result = {
-    "@context": context,
+    "@context": selectJsonLdContext(dataset),
     "iri": dataset.iri,
-    "typ": type,
+    "typ": selectJsonLdDatasetType(dataset),
     "název": asLanguageMap(dataset.title_cs, dataset.title_en),
     "popis": asLanguageMap(dataset.description_cs, dataset.description_en),
     ...exportSpatial(dataset),
@@ -184,9 +155,10 @@ function exportDatasetToJsonLd(
     result["téma"] = dataset.dataset_themes;
   }
 
+  const legislation = selectDatasetLegislation(dataset);
   if (dataset.legislation.length > 0 || legislation.length > 0) {
     result["právní_předpis"] =
-      normalizeLegislation([...legislation, ...dataset.legislation]);
+      asUniqAndSorted([...legislation, ...dataset.legislation]);
   }
 
   if (dataset.hvd_categories.length > 0) {
@@ -245,6 +217,68 @@ function exportDatasetToJsonLd(
 }
 
 /**
+ * @param {{mode: "default" | "hvd" | "non-public"}} dataset
+ * @returns {string}
+ */
+function selectJsonLdContext(dataset) {
+  switch (dataset.mode) {
+    case MODE_HVD:
+      return "https://ofn.gov.cz/dcat-ap-cz-hvd/2026-09-23/datová-sada/kontext.jsonld";
+    case MODE_NON_PUBLIC:
+      return "https://ofn.gov.cz/dcat-ap-cz-datová-rozhraní/2026-09-23/datová-sada/kontext.jsonld";
+    case MODE_OPEN_DATA:
+    default:
+      return "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/2026-09-23/datová-sada/kontext.jsonld";
+  }
+}
+
+/**
+ * @param {{mode: "default" | "hvd" | "non-public"}} dataset
+ * @returns {string | string[]}
+ */
+function selectJsonLdDatasetType(dataset) {
+  switch (dataset.mode) {
+    case MODE_NON_PUBLIC:
+      return ["Datová sada", "Datová sada SSP"];
+    default:
+      return "Datová sada";
+  }
+}
+
+/**
+ * @param {{mode: "default" | "hvd" | "non-public"}} dataset
+ * @returns {string[]}
+ */
+function selectDatasetLegislation(dataset) {
+  switch (dataset.mode) {
+    case MODE_HVD:
+      return [
+        ESBIRKA.SB_1999_106_2025_08_19,
+        ESBIRKA.NORM_1_5B,
+        EUROPE.REG_2023_138_oj,
+      ];
+    case MODE_NON_PUBLIC:
+      return [
+        ESBIRKA.SB_2026_60_2026_05_27
+      ];
+    case MODE_OPEN_DATA:
+    default:
+      return [
+        ESBIRKA.SB_1999_106_2025_08_19,
+      ];
+  }
+}
+
+/**
+ * Remove duplicities and sort.
+ * @param {string[]} legislation
+ * @returns {string[]}
+ */
+function asUniqAndSorted(legislation) {
+  return [...new Set(legislation)].sort();
+}
+
+/**
  * @param {{spatial: {url: string, type: string}[]}} value
  * @returns
  */
@@ -259,21 +293,21 @@ function exportSpatial(value) {
   value.spatial.map((spatial) => {
     const url = spatial.url;
     switch (spatial.type) {
-    case SPATIAL_RUIAN:
-      ruian.push(url);
-      break;
-    case SPATIAL_CONTINENT:
-    case SPATIAL_COUNTRY:
-    case SPATIAL_PLACE:
-      geo_area.push(url);
-      break;
-    case SPATIAL_URL:
-      custom.push(url);
-      break;
-    default:
-      console.warn("Unknown spatial type for", spatial);
-      custom.push(url);
-      break;
+      case SPATIAL_RUIAN:
+        ruian.push(url);
+        break;
+      case SPATIAL_CONTINENT:
+      case SPATIAL_COUNTRY:
+      case SPATIAL_PLACE:
+        geo_area.push(url);
+        break;
+      case SPATIAL_URL:
+        custom.push(url);
+        break;
+      default:
+        console.warn("Unknown spatial type for", spatial);
+        custom.push(url);
+        break;
     }
   });
   const result = {};
@@ -313,6 +347,7 @@ function exportTemporal(value) {
 }
 
 /**
+ * Used by dataset, where url is not present, and distribution.
  *
  * @param {{
  * contact_point_name: string,
@@ -348,8 +383,8 @@ function exportContactPoint(value) {
 //
 
 /**
- * @param {*} dataset
- * @param {*} distribution
+ * @param {import("../dataset-model").Dataset} dataset
+ * @param {import("../distribution-model").Distribution} distribution
  * @param {number} distributionIndex Index of the distribution.
  * @param {(distribution: *, index: number) => ?string | undefined} distributionIri
  * @param {(service: *, distribution: string) => string | undefined} serviceIri
@@ -361,7 +396,11 @@ function exportDistribution(
 
   /** @type * */
   const result = {
-    "právní_předpis": [],
+    "právní_předpis":
+      asUniqAndSorted([
+        ...distribution.legislation,
+        ...selectDistributionLegislation(dataset, distribution)
+      ]),
   };
 
   // First we deal with the non-public mode as it adds some properties.
@@ -390,14 +429,9 @@ function exportDistribution(
     }
   } else {
     result["typ"] = "Distribuce";
-    result["právní_předpis"].push(EUROPE.openData);
   }
 
-  // Next we dal with distribution model.
-
-  if (distribution.is_hvd) {
-    result["právní_předpis"].push(EUROPE.hvd);
-  }
+  // Next is the rest of the distribution entity.
 
   const iri = distributionIri(distribution, distributionIndex);
   if (isNotEmpty(iri)) {
@@ -411,13 +445,9 @@ function exportDistribution(
 
   result["podmínky_užití"] = exportTermsOfUse(distribution);
 
-  if (distribution.legislation.length > 0) {
-    result["právní_předpis"].push(...distribution.legislation);
-  }
-
-  if (result["právní_předpis"].length > 0) {
-    result["právní_předpis"] = normalizeLegislation(result["právní_předpis"]);
-  } else {
+  // Remove empty array, we need to do it here
+  // as data service may copy this field.
+  if (result["právní_předpis"].length === 0) {
     delete result["právní_předpis"];
   }
 
@@ -433,16 +463,49 @@ function exportDistribution(
 }
 
 /**
- * Remove duplicities and sort, so the output is stable.
- * @param {string[]} legislation
+ * @param {{mode: "default" | "hvd" | "non-public"}} dataset
+ * @param {import("../distribution-model").Distribution} distribution
  * @returns {string[]}
  */
-function normalizeLegislation(legislation) {
-  return [...new Set(legislation)].sort();
+function selectDistributionLegislation(dataset, distribution) {
+  switch (dataset.mode) {
+    case MODE_HVD:
+      if (distribution.is_hvd) {
+        return [
+          ESBIRKA.SB_1999_106_2025_08_19,
+          ESBIRKA.NORM_1_5B,
+          EUROPE.REG_2023_138_oj,
+        ];
+      } else {
+        return [
+          ESBIRKA.SB_1999_106_2025_08_19,
+        ];
+      }
+    case MODE_NON_PUBLIC:
+      if (distribution.zpusoby_ziskani.length === 0 &&
+        isEmpty(distribution.zpusob_sdileni) &&
+        distribution.typy_obsahu.length === 0 &&
+        distribution.zprostredkovava_sdileni.length === 0) {
+        return [
+          ESBIRKA.SB_2026_60_2026_05_27,
+        ];
+      } else {
+        return [
+          ESBIRKA.SB_2026_60_2026_05_27,
+          ESBIRKA.SB_2000_365_2026_01_01,
+          ESBIRKA.SB_2023_360_2024_07_01,
+        ]
+      }
+    case MODE_OPEN_DATA:
+    default:
+      return [
+        ESBIRKA.SB_1999_106_2025_08_19,
+      ];
+  }
 }
 
 /**
- * @param {*} distribution
+ * @param {import("../distribution-model").Distribution} distribution
  * @returns
  */
 function exportTermsOfUse(distribution) {
@@ -451,93 +514,93 @@ function exportTermsOfUse(distribution) {
     "typ": "Specifikace podmínek užití",
   };
   switch (distribution.license_author_type) {
-  case undefined:
-    // For download of partial data.
-    break;
-  case "MULTI":
-    result["autorské_dílo"] = PU.obsahujeViceAutorskychDel;
-    break;
-  case "CC BY":
-    result["autorské_dílo"] = CREATIVE_COMMONS.BY_40;
-    result["autor"] = asLanguageMap(distribution.license_author_name);
-    break;
-  case "NO":
-    result["autorské_dílo"] = PU.neobsahujeAutorskaDila;
-    break;
-  case "CUSTOM":
-    result["autorské_dílo"] = distribution.license_author_custom;
-    break;
-  default:
-    console.error("Unexpected license_author_type value:",
-      distribution.license_author_type);
-    break;
+    case undefined:
+      // For download of partial data.
+      break;
+    case "MULTI":
+      result["autorské_dílo"] = PU.obsahujeViceAutorskychDel;
+      break;
+    case "CC BY":
+      result["autorské_dílo"] = CREATIVE_COMMONS.BY_40;
+      result["autor"] = asLanguageMap(distribution.license_author_name);
+      break;
+    case "NO":
+      result["autorské_dílo"] = PU.neobsahujeAutorskaDila;
+      break;
+    case "CUSTOM":
+      result["autorské_dílo"] = distribution.license_author_custom;
+      break;
+    default:
+      console.error("Unexpected license_author_type value:",
+        distribution.license_author_type);
+      break;
   }
 
   switch (distribution.license_db_type) {
-  case undefined:
-    // For download of partial data.
-    break;
-  case "CC BY":
-    result["databáze_jako_autorské_dílo"] = CREATIVE_COMMONS.BY_40;
-    result["autor_databáze"] = asLanguageMap(distribution.license_db_name);
-    break;
-  case "NO":
-    result["databáze_jako_autorské_dílo"] =
+    case undefined:
+      // For download of partial data.
+      break;
+    case "CC BY":
+      result["databáze_jako_autorské_dílo"] = CREATIVE_COMMONS.BY_40;
+      result["autor_databáze"] = asLanguageMap(distribution.license_db_name);
+      break;
+    case "NO":
+      result["databáze_jako_autorské_dílo"] =
         PU.neniAutorskopravneChranenouDatabazi;
-    break;
-  case "CUSTOM":
-    result["databáze_jako_autorské_dílo"] =
+      break;
+    case "CUSTOM":
+      result["databáze_jako_autorské_dílo"] =
         distribution.license_db_custom;
-    break;
-  default:
-    console.error("Unexpected license_db_type value:",
-      distribution.license_db_type);
-    break;
+      break;
+    default:
+      console.error("Unexpected license_db_type value:",
+        distribution.license_db_type);
+      break;
   }
 
   switch (distribution.license_specialdb_type) {
-  case undefined:
-    // For download of partial data.
-    break;
-  case "CC0":
-    result["databáze_chráněná_zvláštními_právy"] =
+    case undefined:
+      // For download of partial data.
+      break;
+    case "CC0":
+      result["databáze_chráněná_zvláštními_právy"] =
         CREATIVE_COMMONS.PUBLIC_ZERO_10;
-    break;
-  case "NO":
-    result["databáze_chráněná_zvláštními_právy"] =
+      break;
+    case "NO":
+      result["databáze_chráněná_zvláštními_právy"] =
         PU.neniChranenazvlastnimPravemPorizovateleDatabaze;
-    break;
-  case "CUSTOM":
-    result["databáze_chráněná_zvláštními_právy"] =
+      break;
+    case "CUSTOM":
+      result["databáze_chráněná_zvláštními_právy"] =
         distribution.license_specialdb_custom;
-    break;
-  default:
-    console.error("Unexpected license_specialdb_type value:",
-      distribution.license_specialdb_type);
-    break;
+      break;
+    default:
+      console.error("Unexpected license_specialdb_type value:",
+        distribution.license_specialdb_type);
+      break;
   }
 
   switch (distribution.license_personal_type) {
-  case undefined:
-    // For download of partial data.
-    break;
-  case "YES":
-    result["osobní_údaje"] = PU.obsahujeOsobniUdaje;
-    break;
-  case "NO":
-    result["osobní_údaje"] = PU.neobsahujeOsobniUdaje;
-    break;
-  default:
-    console.error("Unexpected license_personal_type value:",
-      distribution.license_personal_type);
-    break;
+    case undefined:
+      // For download of partial data.
+      break;
+    case "YES":
+      result["osobní_údaje"] = PU.obsahujeOsobniUdaje;
+      break;
+    case "NO":
+      result["osobní_údaje"] = PU.neobsahujeOsobniUdaje;
+      break;
+    default:
+      console.error("Unexpected license_personal_type value:",
+        distribution.license_personal_type);
+      break;
   }
 
   return result;
 }
 
 /**
- * @param {*} distribution
+ * @param {import("../distribution-model").Distribution} distribution
  * @param {*} parent Output argument.
  */
 function addFileDistribution(distribution, parent) {
@@ -569,8 +632,8 @@ function addFileDistribution(distribution, parent) {
 }
 
 /**
- * @param {*} dataset
- * @param {*} distribution
+ * @param {{hvd_categories: string[]}} dataset
+ * @param {import("../distribution-model").Distribution} distribution
  * @param  {(service: *, distribution: string) => string | undefined} serviceIri
  * @param {*} parent Output argument.
  */
@@ -645,7 +708,7 @@ function addDataService(
 /**
  * @param {string} value_cs
  * @param {string | undefined} value_en
- * @returns
+ * @returns {{cs?: string, en?: string}}
  */
 function asLanguageMap(value_cs, value_en = undefined) {
   const result = {};
@@ -660,7 +723,7 @@ function asLanguageMap(value_cs, value_en = undefined) {
 
 /**
  * @param {undefined | null | string} value
- * @returns
+ * @returns {boolean}
  */
 function isNotEmpty(value) {
   return !isEmpty(value);
@@ -668,20 +731,8 @@ function isNotEmpty(value) {
 
 /**
  * @param {undefined | null | string} value
- * @returns
+ * @returns {boolean}
  */
 function isEmpty(value) {
   return value === undefined || value === null || value === "";
-}
-
-/**
- * @param {*[]} items
- * @returns
- */
-function arrayOrValue(items) {
-  if (items.length === 1) {
-    return items[0];
-  } else {
-    return items;
-  }
 }

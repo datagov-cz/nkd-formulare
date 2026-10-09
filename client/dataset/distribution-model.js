@@ -6,7 +6,69 @@ import {
   shouldValidate,
   email,
 } from "../app-service/validators";
-import { includesHvdLegislation, MODE_HVD } from "./dataset-model";
+import { MODE_HVD } from "./dataset-model";
+
+//
+// Section : Type definitions.
+//
+
+/**
+ * @typedef {object} Distribution
+ * @property {"file" | "service"} type
+ * Legislation:
+ * @property {"MULTI" | "CC BY" | "CUSTOM" | "NO"} license_author_type
+ * @property {string} license_author_name
+ * @property {string} license_author_custom
+ * @property {"CC BY" | "NO" | "CUSTOM"} license_db_type
+ * @property {string} license_db_name
+ * @property {string} license_db_custom
+ * @property {"CC0" | "NO" | "CUSTOM"} license_specialdb_type
+ * @property {string} license_specialdb_custom
+ * @property {"YES" | "NO"} license_personal_type
+ * Distribution:
+ * @property {string} iri
+ * @property {string} url dcat:downloadURL
+ * @property {string} format
+ * @property {string} media_type
+ * @property {string} schema
+ * @property {string} title_cs
+ * @property {string} title_en
+ * @property {string} package_format
+ * @property {string} compress_format
+ * @property {string[]} legislation
+ * Non-public
+ * @property {string[]} typy_obsahu
+ * @property {string | null} zpusob_sdileni
+ * @property {string[]} zpusoby_ziskani
+ * @property {ZprostredkovavaSdileni[]} zprostredkovava_sdileni
+ * Service
+ * @property {string} service_iri
+ * @property {string} service_endpoint_url
+ * @property {string} service_description
+ * @property {string} service_conforms_to
+ * High Value Dataset
+ * @property {boolean} is_hvd
+ * @property {string} contact_point_name
+ * @property {string} contact_point_email
+ * @property {string} contact_point_url
+ * @property {string} documentation
+ * @property {boolean} service_title_copy
+ * @property {string} service_title_cs
+ * @property {string} service_title_en
+ * @property {{force: boolean} | {}} $validators
+ */
+
+/**
+ * @typedef {object} ZprostredkovavaSdileni
+ * @property {string | null} typ_obsahu Value from a codelist.
+ * @property {string | null} zpusob_sdileni Value from a codelist.
+ * @property {string | null} zpusob_ziskani Value from a codelist.
+ * @property {string | null} related_term
+ */
+
+//
+//
+//
 
 export const DIST_TYPE_FILE = "file";
 
@@ -15,6 +77,7 @@ export const DIST_TYPE_SERVICE = "service";
 /**
  * Distribution can be default one or HVD one.
  * The detection is done based on the legislation.
+ * @returns {Distribution}
  */
 export function createDistribution() {
   return {
@@ -90,6 +153,7 @@ export function createDistribution() {
   };
 }
 
+/** @returns {ZprostredkovavaSdileni} */
 export function createZprostredkovavaSdileni() {
   return {
     /** @lc-property https://ofn.gov.cz/dcat-ap-cz-datová-rozhraní#SdíleníÚdaje.jeSdílenJako */
@@ -103,6 +167,7 @@ export function createZprostredkovavaSdileni() {
   };
 }
 
+/** @param {ZprostredkovavaSdileni} value  */
 function validateZprostredkovavaSdileni(value) {
   return value.typ_obsahu !== null
     && value.zpusob_sdileni !== null

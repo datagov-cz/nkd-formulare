@@ -622,14 +622,18 @@ function addDataService(
     // While this is mandatory for HVD we keep it optional for backwards
     // export compatibility.
     const contactPoint = exportContactPoint(distribution);
-    if (contactPoint !== undefined) {
+    if (contactPoint !== null) {
       service["kontaktní_bod"] = contactPoint;
     }
 
-    service["dokumentace"] = distribution.documentation;
+    if (isNotEmpty(distribution.documentation)) {
+      service["dokumentace"] = distribution.documentation;
+    }
 
     // Categories are a copy from the dataset.
-    service["kategorie_hvd"] = dataset.hvd_categories;
+    if (dataset.hvd_categories.length > 0) {
+      service["kategorie_hvd"] = dataset.hvd_categories;
+    }
   }
 
 }

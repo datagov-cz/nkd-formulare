@@ -1,0 +1,43 @@
+{
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-rozhraní-katalogů-otevřených-dat/2024-05-28/kontexty/rozhraní-katalogů-otevřených-dat.jsonld",
+  "iri": "https://od.min.lkod.cz",
+  "typ": "Datová sada",
+  "název": {
+    "cs": "Běžná otevřená data - minimální"
+  },
+  "popis": {
+    "cs": "Popis otevřených dat"
+  },
+  "prvek_rúian": [
+    "https://linked.cuzk.cz/resource/ruian/stat/1"
+  ],
+  "klíčové_slovo": {
+    "cs": [
+      "otevřená data",
+      "druhý",
+      "třetí"
+    ]
+  },
+  "periodicita_aktualizace": "http://publications.europa.eu/resource/authority/frequency/MONTHLY",
+  "téma": [
+    "http://publications.europa.eu/resource/authority/data-theme/ECON"
+  ],
+  "poskytovatel": "https://poskytovatel.cz",
+  "distribuce": [
+    {
+      "typ": "Distribuce",
+      "iri": "https://od.min.lkod.cz/distribuce/0",
+      "podmínky_užití": {
+        "typ": "Specifikace podmínek užití",
+        "autorské_dílo": "https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/",
+        "databáze_jako_autorské_dílo": "https://data.gov.cz/podmínky-užití/není-autorskoprávně-chráněnou-databází/",
+        "databáze_chráněná_zvláštními_právy": "https://data.gov.cz/podmínky-užití/není-chráněna-zvláštním-právem-pořizovatele-databáze/",
+        "osobní_údaje": "https://data.gov.cz/podmínky-užití/neobsahuje-osobní-údaje/"
+      },
+      "soubor_ke_stažení": "https://test.cz/download",
+      "přístupové_url": "https://test.cz/download",
+      "typ_média": "http://www.iana.org/assignments/media-types/text/csv",
+      "formát": "http://publications.europa.eu/resource/authority/file-type/CSV"
+    }
+  ]
+}

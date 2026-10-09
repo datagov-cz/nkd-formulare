@@ -1,0 +1,114 @@
+{
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-hvd/2026-09-23/datová-sada/kontext.jsonld",
+  "iri": "_:ds",
+  "typ": "Datová sada",
+  "název": {
+    "cs": "HVD+dynamická+registry"
+  },
+  "popis": {
+    "cs": "Popis otevřených dat"
+  },
+  "prvek_rúian": [
+    "https://linked.cuzk.cz/resource/ruian/stat/1"
+  ],
+  "klíčové_slovo": {
+    "cs": [
+      "otevřená data",
+      "druhý",
+      "třetí"
+    ]
+  },
+  "periodicita_aktualizace": "http://publications.europa.eu/resource/authority/frequency/MONTHLY",
+  "téma": [
+    "http://publications.europa.eu/resource/authority/data-theme/ECON"
+  ],
+  "právní_předpis": [
+    "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19",
+    "http://data.europa.eu/eli/reg_impl/2023/138/oj",
+    "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_5b",
+    "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_3a/odst_6",
+    "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_5a/odst_1"
+  ],
+  "kategorie_hvd": [
+    "http://data.europa.eu/bna/c_e50004c6"
+  ],
+  "distribuce": [
+    {
+      "právní_předpis": [
+        "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19",
+        "http://data.europa.eu/eli/reg_impl/2023/138/oj",
+        "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_5b",
+        "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_5a/odst_1"
+      ],
+      "typ": "Distribuce",
+      "podmínky_užití": {
+        "typ": "Specifikace podmínek užití",
+        "autorské_dílo": "https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/",
+        "databáze_jako_autorské_dílo": "https://data.gov.cz/podmínky-užití/není-autorskoprávně-chráněnou-databází/",
+        "databáze_chráněná_zvláštními_právy": "https://data.gov.cz/podmínky-užití/není-chráněna-zvláštním-právem-pořizovatele-databáze/",
+        "osobní_údaje": "https://data.gov.cz/podmínky-užití/neobsahuje-osobní-údaje/"
+      },
+      "soubor_ke_stažení": "https://test.cz/download",
+      "přístupové_url": "https://test.cz/download",
+      "typ_média": "http://www.iana.org/assignments/media-types/text/csv",
+      "formát": "http://publications.europa.eu/resource/authority/file-type/CSV"
+    },
+    {
+      "právní_předpis": [
+        "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19",
+        "http://data.europa.eu/eli/reg_impl/2023/138/oj",
+        "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_5b",
+        "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_3a/odst_6"
+      ],
+      "typ": "Distribuce",
+      "název": {
+        "cs": "https://popis.distribuce"
+      },
+      "podmínky_užití": {
+        "typ": "Specifikace podmínek užití",
+        "autorské_dílo": "https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/",
+        "databáze_jako_autorské_dílo": "https://data.gov.cz/podmínky-užití/není-autorskoprávně-chráněnou-databází/",
+        "databáze_chráněná_zvláštními_právy": "https://data.gov.cz/podmínky-užití/není-chráněna-zvláštním-právem-pořizovatele-databáze/",
+        "osobní_údaje": "https://data.gov.cz/podmínky-užití/neobsahuje-osobní-údaje/"
+      },
+      "přístupové_url": "https://služba.cz",
+      "přístupová_služba": {
+        "typ": "Datová služba",
+        "přístupový_bod": "https://služba.cz",
+        "popis_přístupového_bodu": "https://popis.endpointu",
+        "název": {
+          "cs": "https://popis.distribuce"
+        },
+        "právní_předpis": [
+          "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19",
+          "http://data.europa.eu/eli/reg_impl/2023/138/oj",
+          "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_5b",
+          "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19/dokument/norma/cast_1/par_3a/odst_6"
+        ],
+        "kontaktní_bod": null,
+        "dokumentace": "",
+        "kategorie_hvd": [
+          "http://data.europa.eu/bna/c_e50004c6"
+        ]
+      }
+    },
+    {
+      "právní_předpis": [
+        "https://www.e-sbirka.cz/eli/cz/sb/1999/106/2025-08-19"
+      ],
+      "typ": "Distribuce",
+      "podmínky_užití": {
+        "typ": "Specifikace podmínek užití",
+        "autorské_dílo": "https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/",
+        "databáze_jako_autorské_dílo": "https://data.gov.cz/podmínky-užití/není-autorskoprávně-chráněnou-databází/",
+        "databáze_chráněná_zvláštními_právy": "https://data.gov.cz/podmínky-užití/není-chráněna-zvláštním-právem-pořizovatele-databáze/",
+        "osobní_údaje": "https://data.gov.cz/podmínky-užití/neobsahuje-osobní-údaje/"
+      },
+      "soubor_ke_stažení": "https://non-hvd.soubor",
+      "přístupové_url": "https://non-hvd.soubor",
+      "typ_média": "http://www.iana.org/assignments/media-types/application/ld+json",
+      "formát": "http://publications.europa.eu/resource/authority/file-type/JSON_LD",
+      "typ_média_komprese": "http://www.iana.org/assignments/media-types/application/gzip"
+    }
+  ]
+}

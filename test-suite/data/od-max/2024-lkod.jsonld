@@ -1,0 +1,110 @@
+{
+  "@context": "https://ofn.gov.cz/dcat-ap-cz-rozhraní-katalogů-otevřených-dat/2024-05-28/kontexty/rozhraní-katalogů-otevřených-dat.jsonld",
+  "iri": "https://od.max.pro.lkod.cz",
+  "typ": "Datová sada",
+  "název": {
+    "cs": "Běžná otevřená data - maximální",
+    "en": "Typical open data - maximal"
+  },
+  "popis": {
+    "cs": "Popis otevřených dat",
+    "en": "Description of open data"
+  },
+  "prvek_rúian": [
+    "https://linked.cuzk.cz/resource/ruian/stat/1"
+  ],
+  "časové_pokrytí": {
+    "typ": "Časový interval",
+    "začátek": "2026-10-08",
+    "konec": "2026-10-31"
+  },
+  "klíčové_slovo": {
+    "cs": [
+      "otevřená data",
+      "druhý",
+      "třetí"
+    ],
+    "en": [
+      "open data",
+      "second",
+      "third"
+    ]
+  },
+  "periodicita_aktualizace": "http://publications.europa.eu/resource/authority/frequency/MONTHLY",
+  "dokumentace": "https://dokumentace.cz",
+  "téma": [
+    "http://publications.europa.eu/resource/authority/data-theme/ECON"
+  ],
+  "koncept_euroVoc": [
+    "http://eurovoc.europa.eu/3587",
+    "http://eurovoc.europa.eu/5275",
+    "https://další.téma.cz"
+  ],
+  "specifikace": [
+    "https://specifikace.cz"
+  ],
+  "časové_rozlišení": "P20M",
+  "prostorové_rozlišení_v_metrech": "45",
+  "kontaktní_bod": {
+    "typ": "Organizace",
+    "jméno": {
+      "cs": "Honza kurátor"
+    },
+    "e-mail": "mailto:honza@xn--kurtor-rta.cz"
+  },
+  "poskytovatel": "https://poskytovatel.cz",
+  "distribuce": [
+    {
+      "typ": "Distribuce",
+      "iri": "https://od.max.pro.lkod.cz/distribuce/0",
+      "název": {
+        "cs": "distribuce česky",
+        "en": "distribuce anglicky"
+      },
+      "podmínky_užití": {
+        "typ": "Specifikace podmínek užití",
+        "autorské_dílo": "https://creativecommons.org/licenses/by/4.0/",
+        "autor": {
+          "cs": "Honza autor"
+        },
+        "databáze_jako_autorské_dílo": "https://vlastní.licence.cz",
+        "databáze_chráněná_zvláštními_právy": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "osobní_údaje": "https://data.gov.cz/podmínky-užití/obsahuje-osobní-údaje/"
+      },
+      "soubor_ke_stažení": "https://test.cz/download",
+      "přístupové_url": "https://test.cz/download",
+      "typ_média": "http://www.iana.org/assignments/media-types/text/csv",
+      "formát": "http://publications.europa.eu/resource/authority/file-type/CSV",
+      "schéma": "https://schéma.cz",
+      "typ_média_komprese": "http://www.iana.org/assignments/media-types/application/gzip"
+    },
+    {
+      "typ": "Distribuce",
+      "iri": "https://od.max.pro.lkod.cz/distribuce/1",
+      "název": {
+        "cs": "Distribuce (služba) česky",
+        "en": "Distribution (serivce) in english"
+      },
+      "podmínky_užití": {
+        "typ": "Specifikace podmínek užití",
+        "autorské_dílo": "https://data.gov.cz/podmínky-užití/neobsahuje-autorská-díla/",
+        "databáze_jako_autorské_dílo": "https://data.gov.cz/podmínky-užití/není-autorskoprávně-chráněnou-databází/",
+        "databáze_chráněná_zvláštními_právy": "https://data.gov.cz/podmínky-užití/není-chráněna-zvláštním-právem-pořizovatele-databáze/",
+        "osobní_údaje": "https://data.gov.cz/podmínky-užití/neobsahuje-osobní-údaje/"
+      },
+      "přístupové_url": "https://endpoint.url.cz",
+      "přístupová_služba": {
+        "typ": "Datová služba",
+        "přístupový_bod": "https://endpoint.url.cz",
+        "popis_přístupového_bodu": "https://popis.endpointu.cz",
+        "iri": "https://od.max.pro.lkod.cz/distribuce/1/přístupová-služba",
+        "název": {
+          "cs": "Distribuce (služba) česky",
+          "en": "Distribution (serivce) in english"
+        },
+        "poskytuje_datovou_sadu": "https://od.max.pro.lkod.cz",
+        "specifikace": "https://specifickace.služby.cz"
+      }
+    }
+  ]
+}

@@ -2,6 +2,7 @@
   <v-container
     fluid
     grid-list-lg
+    pa-0
   >
     <v-layout row>
       <v-flex>

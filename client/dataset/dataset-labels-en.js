@@ -277,7 +277,7 @@ export default {
   "related_terms": "Related terms",
   "related_terms_autocomplete_no_data": "Start typing the name of the related term.",
   "missing_related_terms": "At least one related term must be selected.",
-  "help_related_terms": "<h3>Related terms</h3><p>Select terms that are related to this dataset.</p>",
+  "help_related_terms": "<h3>Related terms</h3><p>Select terms that are related to this dataset. The terms are loaded from valid data vocabularies registered in the national data catalog.</p>",
   "typy_obsahu": "Types of data content",
   "help_typy_obsahu": "<h3>Types of data content</h3><p>Select types of data content included in the dataset and provided through the data interface.</p>",
   "zpusob_sdileni": "A way of sharing data",
@@ -321,7 +321,7 @@ export default {
   "related_term": "Related term",
   "related_term_autocomplete_no_data": "Start typing the name of the related term.",
   "missing_related_term": "One related term must be selected.",
-  "help_related_term": "<h3>Related term</h3><p>Select term that is related to this distribution.</p>",
+  "help_related_term": "<h3>Related term</h3><p>Select term corresponding to the data being shared. The terms are loaded from valid data vocabularies registered in the national data catalog.</p>",
   // Typ obsahu
   "typ_obsahu": "Type of data content",
   "help_typ_obsahu": "<h3>Type of data content</h3><p>Select the type of data content included in the dataset and provided through the data interface.</p>",

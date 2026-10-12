@@ -276,7 +276,7 @@ export default {
   "related_terms": "Související pojmy",
   "related_terms_autocomplete_no_data": "Začněte psát název souvisejícího pojmu.",
   "missing_related_terms": "Je třeba vybrat alespoň jeden související pojem.",
-  "help_related_terms": "<h3>Související pojmy</h3><p>Vyberte pojmy, které souvisí s touto datovou sadou.</p>",
+  "help_related_terms": "<h3>Související pojmy</h3><p>Vyberte pojmy, které souvisí s touto datovou sadou. Pojmy se načítají z validních datových slovníků registrovaných v národním katalogu dat.</p>",
   "typy_obsahu": "Typy obsahu údajů",
   "help_typy_obsahu": "<h3>Typy obsahu údajů</h3><p>Vyberte typy obsahu údajů obsažených v datové sadě, poskytovaných skrze datové rozhraní.</p>",
   "zpusob_sdileni": "Způsob sdílení údajů",
@@ -319,7 +319,7 @@ export default {
   "related_term": "Související pojem",
   "related_term_autocomplete_no_data": "Začněte psát název souvisejícího pojmu.",
   "missing_related_term": "Je třeba vybrat související pojem.",
-  "help_related_term": "<h3>Související pojem</h3><p>Vyberte pojem, který souvisí s touto distribucí.</p>",
+  "help_related_term": "<h3>Související pojem</h3><p>Vyberte pojem odpovídající sdíleným údajům. Pojmy se načítají z validních datových slovníků registrovaných v národním katalogu dat.</p>",
   // Typ obsahu
   "typ_obsahu": "Typ obsahu údajů",
   "help_typ_obsahu": "<h3>Typ obsahu údajů</h3><p>Vyberte typ obsahu údajů obsažených v datové sadě, poskytovaných skrze datové rozhraní.</p>",

@@ -12,7 +12,7 @@ import {
 
 describe("dataset", () => {
 
-  test("od-dyn nkod", () => {
+  test("od-dyn nkod 2024-2026", () => {
     const input = loadJson("./data/od-dyn/2024-nkod.jsonld");
     const expected = loadJson("./data/od-dyn/2026-nkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
@@ -29,7 +29,17 @@ describe("dataset", () => {
     return JSON.parse(fs.readFileSync(path.join(__dirname, file), "utf-8"));
   }
 
-  test("od-hvd nkod", () => {
+    test("od-dyn nkod 2026-2026", () => {
+    const input = loadJson("./data/od-dyn/2026-nkod.jsonld");
+    const expected = loadJson("./data/od-dyn/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-hvd nkod 2024 - 2026", () => {
     const input = loadJson("./data/od-hvd/2024-nkod.jsonld");
     const expected = loadJson("./data/od-hvd/2026-nkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
@@ -39,7 +49,17 @@ describe("dataset", () => {
     });
   });
 
-  test("od-hvd-dyn-vr nkod", () => {
+    test("od-hvd nkod 2026 - 2026", () => {
+    const input = loadJson("./data/od-hvd/2026-nkod.jsonld");
+    const expected = loadJson("./data/od-hvd/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-hvd-dyn-vr nkod 2024 - 2026", () => {
     const input = loadJson("./data/od-hvd-dyn-vr/2024-nkod.jsonld");
     const expected = loadJson("./data/od-hvd-dyn-vr/2026-nkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
@@ -49,7 +69,17 @@ describe("dataset", () => {
     });
   });
 
-  test("od-min lkod", () => {
+  test("od-hvd-dyn-vr nkod 2026 - 2026", () => {
+    const input = loadJson("./data/od-hvd-dyn-vr/2026-nkod.jsonld");
+    const expected = loadJson("./data/od-hvd-dyn-vr/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-min lkod 2024 - 2026", () => {
     const input = loadJson("./data/od-min/2024-lkod.jsonld");
     const expected = loadJson("./data/od-min/2026-lkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
@@ -62,17 +92,46 @@ describe("dataset", () => {
     });
   });
 
-  test("od-min post", () => {
+  test("od-min lkod 2026 - 2026", () => {
     const input = loadJson("./data/od-min/2026-lkod.jsonld");
-    const expected = loadJson("./data/od-min/2026-post.jsonld");
+    const expected = loadJson("./data/od-min/2026-lkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
-      const actual = exportDatasetForPost(
-        data.dataset, data.distributions);
+      const actual = exportDatasetForLocalDataCatalog(
+        data.dataset, data.distributions, {
+        lkodIri: "https://od.min.lkod.cz",
+        publisher: "https://poskytovatel.cz",
+      });
       expect(actual).toEqual(expected);
     });
   });
 
-  test("od-min nkod", () => {
+  test("od-max lkod 2024 - 2026", () => {
+    const input = loadJson("./data/od-min/2024-lkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-lkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForLocalDataCatalog(
+        data.dataset, data.distributions, {
+        lkodIri: "https://od.min.lkod.cz",
+        publisher: "https://poskytovatel.cz",
+      });
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-max lkod 2026 - 2026", () => {
+    const input = loadJson("./data/od-min/2026-lkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-lkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForLocalDataCatalog(
+        data.dataset, data.distributions, {
+        lkodIri: "https://od.min.lkod.cz",
+        publisher: "https://poskytovatel.cz",
+      });
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-max nkod 2024 - 2026", () => {
     const input = loadJson("./data/od-min/2024-nkod.jsonld");
     const expected = loadJson("./data/od-min/2026-nkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
@@ -82,8 +141,68 @@ describe("dataset", () => {
     });
   });
 
-  test("od-vr nkod", () => {
+  test("od-max nkod 2026 - 2026", () => {
+    const input = loadJson("./data/od-min/2026-nkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-min post 2024 - 2026", () => {
+    const input = loadJson("./data/od-min/2026-lkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-post.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForPost(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-min post 2024 - 2026", () => {
+    const input = loadJson("./data/od-min/2026-lkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-post.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForPost(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-min nkod 2024 - 2026", () => {
+    const input = loadJson("./data/od-min/2024-nkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-min nkod 2026 - 2026", () => {
+    const input = loadJson("./data/od-min/2026-nkod.jsonld");
+    const expected = loadJson("./data/od-min/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-vr nkod 2024 - 2026", () => {
     const input = loadJson("./data/od-vr/2024-nkod.jsonld");
+    const expected = loadJson("./data/od-vr/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-vr nkod 2026 - 2026", () => {
+    const input = loadJson("./data/od-vr/2026-nkod.jsonld");
     const expected = loadJson("./data/od-vr/2026-nkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
       const actual = exportDatasetForNationalDataCatalog(

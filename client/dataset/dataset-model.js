@@ -61,7 +61,9 @@ export function loadImplicitLegislation(legislation) {
     [ESBIRKA.NORM_2024_01_01_1_5A_1] : ESBIRKA.NORM_2025_08_19_1_5A_1,
     [ESBIRKA.NORM_2024_01_011_3A_6] : ESBIRKA.NORM_2025_08_19_1_3A_6,
   };
-  const migrated = legislation.map(iri => migration[iri] ?? iri);
+  // Data can contain obsolete and current version of the same legislation,
+  // we need to remove duplicities created by the migration.
+  const migrated = [...new Set(legislation.map(iri => migration[iri] ?? iri))];
 
   /** @type string[] Legislation to remove on import. */
   const blackList = [

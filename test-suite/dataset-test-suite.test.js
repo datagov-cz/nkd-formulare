@@ -8,11 +8,31 @@ import {
   exportDatasetForNationalDataCatalog,
   exportDatasetForLocalDataCatalog,
   exportDatasetForPost,
-} from "../client/dataset/edit/dataset-export.js";
+} from "../client/dataset/edit/dataset-export/index.js";
 
 describe("dataset", () => {
 
-  test("od-dyn nkod 2024-2026", () => {
+  test("np-full lkod 2026 - 2026", () => {
+    const input = loadJson("./data/np-full/2026-lkod.jsonld");
+    const expected = loadJson("./data/np-full/2026-lkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForLocalDataCatalog(
+        data.dataset, data.distributions, {});
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("np-full nkod 2026 - 2026", () => {
+    const input = loadJson("./data/np-full/2026-nkod.jsonld");
+    const expected = loadJson("./data/np-full/2026-nkod.jsonld");
+    return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
+      const actual = exportDatasetForNationalDataCatalog(
+        data.dataset, data.distributions);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  test("od-dyn nkod 2024 - 2026", () => {
     const input = loadJson("./data/od-dyn/2024-nkod.jsonld");
     const expected = loadJson("./data/od-dyn/2026-nkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
@@ -22,14 +42,7 @@ describe("dataset", () => {
     });
   });
 
-  /**
-   * @param {string} file Path relative to this directory.
-   */
-  function loadJson(file) {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, file), "utf-8"));
-  }
-
-    test("od-dyn nkod 2026-2026", () => {
+  test("od-dyn nkod 2026 - 2026", () => {
     const input = loadJson("./data/od-dyn/2026-nkod.jsonld");
     const expected = loadJson("./data/od-dyn/2026-nkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
@@ -49,7 +62,7 @@ describe("dataset", () => {
     });
   });
 
-    test("od-hvd nkod 2026 - 2026", () => {
+  test("od-hvd nkod 2026 - 2026", () => {
     const input = loadJson("./data/od-hvd/2026-nkod.jsonld");
     const expected = loadJson("./data/od-hvd/2026-nkod.jsonld");
     return importFromJsonLd(input, "cs").then(/** @param {any} data */ data => {
@@ -212,3 +225,11 @@ describe("dataset", () => {
   });
 
 });
+
+/**
+ * @param {string} file Path relative to this directory.
+ */
+function loadJson(file) {
+  return JSON.parse(fs.readFileSync(path.join(__dirname, file), "utf-8"));
+}
+

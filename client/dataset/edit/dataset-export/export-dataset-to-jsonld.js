@@ -1,147 +1,47 @@
+/**
+ * This file must not export any other function then the main entry point.
+ * The idea is to make it standalone.
+ */
 import {
   PU,
   CREATIVE_COMMONS,
   EUROPE,
   ESBIRKA,
-} from "../../app-service/vocabulary";
-import { DIST_TYPE_FILE, DIST_TYPE_SERVICE } from "../distribution-model";
+} from "../../../app-service/vocabulary";
+import { DIST_TYPE_FILE, DIST_TYPE_SERVICE } from "../../distribution-model";
 import {
   MODE_HVD,
-  MODE_NON_PUBLIC,
   MODE_OPEN_DATA,
   SPATIAL_CONTINENT,
   SPATIAL_COUNTRY,
   SPATIAL_PLACE,
   SPATIAL_RUIAN,
   SPATIAL_URL,
-} from "../dataset-model";
-import { zpusobySdileniUdaju } from "./codelists/non-public";
+} from "../../dataset-model";
+import { asLanguageMap, isEmpty, isNotEmpty, asUniqAndSorted } from "./utilities";
 
 /**
- * Export a dataset so it can be send to the National Data Catalog.
- * All IRIs as set to be blank nodes.
- * Information about the publisher is removed.
+ * Export open data and high value datasets.
  *
- * @param {import("../dataset-model").Dataset} dataset
- * @param {import("../distribution-model").Distribution[]} distributions
- */
-export function exportDatasetForNationalDataCatalog(dataset, distributions) {
-  // Create a copy so we do not modify the inputs.
-  dataset = { ...dataset };
-  // There is no IRI and no publisher.
-  dataset.iri = "_:ds";
-  dataset.publisher = undefined;
-
-  // Generate new IRIs.
-
-  const selectDistributionIri = () => undefined;
-
-  const selectServiceIri = () => undefined;
-
-  return exportDatasetToJsonLd(
-    dataset, distributions, selectDistributionIri, selectServiceIri);
-}
-
-/**
- * Export a dataset so it can be used in a Local Data Catalog.
- * Use IRIs from export options or try to preserve IRIs from the dataset.
- *
- * @param {import("../dataset-model").Dataset} dataset
- * @param {import("../distribution-model").Distribution[]} distributions
- * @param {{lkodIri?: string, publisher?: string}} options
- */
-export function exportDatasetForLocalDataCatalog(
-  dataset, distributions, options) {
-  // Create a copy so we do not modify the inputs.
-  dataset = { ...dataset };
-  // Apply export options.
-  if (isNotEmpty(options.lkodIri)) {
-    dataset.iri = options.lkodIri;
-  }
-  if (isNotEmpty(options.publisher)) {
-    dataset.publisher = options.publisher;
-  }
-
-  // Generate new IRIs.
-
-  /**
-   * @param {*} _
-   * @param {number} index
-   * @returns
-   */
-  const selectDistributionIri = (_, index) =>
-    dataset.iri + "/distribuce/" + index;
-
-  /**
-   * @param {*} _
-   * @param {string} distributionIri
-   * @returns
-   */
-  const selectServiceIri = (_, distributionIri) =>
-    distributionIri + "/přístupová-služba";
-
-  return exportDatasetToJsonLd(
-    dataset, distributions, selectDistributionIri, selectServiceIri);
-}
-
-/**
- * Export data for POST, in this case we want to preserve IRIs where possible.
- * Without a change this should produce the same output as was input for import.
- * @param {import("../dataset-model").Dataset} dataset
- * @param {import("../distribution-model").Distribution[]} distributions
- */
-export function exportDatasetForPost(dataset, distributions) {
-  // Create a copy so we do not modify the inputs.
-  dataset = { ...dataset };
-
-  // Use existing or nothing (blank nodes).
-
-  const selectDistributionIri =
-    (/** @type {{ iri: string; }} */distribution) =>
-      distribution.iri ?? undefined;
-
-  const selectServiceIri =
-    (/** @type {{ service_iri: string; }} */ distribution) =>
-      distribution.service_iri ?? undefined;
-
-  return exportDatasetToJsonLd(
-    dataset, distributions, selectDistributionIri, selectServiceIri);
-}
-
-/**
- * @param {import("../dataset-model").Dataset} dataset
- * @param {import("../distribution-model").Distribution[]} distributions
- * @param {(distribution: import("../distribution-model").Distribution, index: number) => ?string | undefined} distributionIri
+ * @param {import("../../dataset-model").Dataset} dataset
+ * @param {import("../../distribution-model").Distribution[]} distributions
+ * @param {(distribution: import("../../distribution-model").Distribution, index: number) => ?string | undefined} distributionIri
  * @param {(service: *, distribution: string) => string | undefined} serviceIri
  */
-function exportDatasetToJsonLd(
+export function exportDatasetToJsonLd(
   dataset, distributions, distributionIri, serviceIri) {
 
   /** @type * */
   const result = {
     "@context": selectJsonLdContext(dataset),
     "iri": dataset.iri,
-    "typ": selectJsonLdDatasetType(dataset),
+    "typ": "Datová sada",
     "název": asLanguageMap(dataset.title_cs, dataset.title_en),
     "popis": asLanguageMap(dataset.description_cs, dataset.description_en),
     ...exportSpatial(dataset),
     ...exportTemporal(dataset),
+    ...exportKeywords(dataset),
   };
-
-  if (dataset.keywords_cs.length > 0 && dataset.keywords_en.length > 0) {
-    result["klíčové_slovo"] = {
-      "cs": dataset.keywords_cs,
-      "en": dataset.keywords_en,
-    };
-  } else if (dataset.keywords_cs.length > 0) {
-    result["klíčové_slovo"] = {
-      "cs": dataset.keywords_cs,
-    };
-  } else if (dataset.keywords_en.length > 0) {
-    result["klíčové_slovo"] = {
-      "en": dataset.keywords_en,
-    };
-  }
 
   if (isNotEmpty(dataset.accrual_periodicity)) {
     result["periodicita_aktualizace"] = dataset.accrual_periodicity;
@@ -163,14 +63,6 @@ function exportDatasetToJsonLd(
 
   if (dataset.hvd_categories.length > 0) {
     result["kategorie_hvd"] = dataset.hvd_categories;
-  }
-
-  if (isNotEmpty(dataset.isvs)) {
-    result["je_zahrnuta_v_isvs"] = dataset.isvs;
-  }
-
-  if (dataset.related_terms.length > 0) {
-    result["týká_se_pojmu"] = dataset.related_terms;
   }
 
   if (dataset.themes.length > 0 || dataset.dataset_custom_themes.length > 0) {
@@ -224,24 +116,9 @@ function selectJsonLdContext(dataset) {
   switch (dataset.mode) {
     case MODE_HVD:
       return "https://ofn.gov.cz/dcat-ap-cz-hvd/2026-09-23/datová-sada/kontext.jsonld";
-    case MODE_NON_PUBLIC:
-      return "https://ofn.gov.cz/dcat-ap-cz-datová-rozhraní/2026-09-23/datová-sada/kontext.jsonld";
     case MODE_OPEN_DATA:
     default:
       return "https://ofn.gov.cz/dcat-ap-cz-otevřená-data/2026-09-23/datová-sada/kontext.jsonld";
-  }
-}
-
-/**
- * @param {{mode: "default" | "hvd" | "non-public"}} dataset
- * @returns {string | string[]}
- */
-function selectJsonLdDatasetType(dataset) {
-  switch (dataset.mode) {
-    case MODE_NON_PUBLIC:
-      return ["Datová sada", "Datová sada SSP"];
-    default:
-      return "Datová sada";
   }
 }
 
@@ -257,25 +134,12 @@ function selectDatasetLegislation(dataset) {
         ESBIRKA.NORM_1_5B,
         EUROPE.REG_2023_138_oj,
       ];
-    case MODE_NON_PUBLIC:
-      return [
-        ESBIRKA.SB_2026_60_2026_05_27
-      ];
     case MODE_OPEN_DATA:
     default:
       return [
         ESBIRKA.SB_1999_106_2025_08_19,
       ];
   }
-}
-
-/**
- * Remove duplicities and sort.
- * @param {string[]} legislation
- * @returns {string[]}
- */
-function asUniqAndSorted(legislation) {
-  return [...new Set(legislation)].sort();
 }
 
 /**
@@ -321,6 +185,27 @@ function exportSpatial(value) {
     result["prostorové_pokrytí"] = custom;
   }
   return result;
+}
+
+/**
+ * @param {{keywords_cs: string[], keywords_en: string[]}} value
+ * @returns
+ */
+function exportKeywords(value) {
+  /** @type {{cs?: string[], en?: string[]}} */
+  const result = {};
+  if (value.keywords_cs.length > 0) {
+    result["cs"] = value.keywords_cs;
+  }
+  if (value.keywords_en.length > 0) {
+    result["en"] = value.keywords_en;
+  }
+  if (result["cs"] === undefined && result["en"] === undefined) {
+    return {};
+  }
+  return {
+    "klíčové_slovo": result,
+  };
 }
 
 /**
@@ -383,8 +268,8 @@ function exportContactPoint(value) {
 //
 
 /**
- * @param {import("../dataset-model").Dataset} dataset
- * @param {import("../distribution-model").Distribution} distribution
+ * @param {import("../../dataset-model").Dataset} dataset
+ * @param {import("../../distribution-model").Distribution} distribution
  * @param {number} distributionIndex Index of the distribution.
  * @param {(distribution: *, index: number) => ?string | undefined} distributionIri
  * @param {(service: *, distribution: string) => string | undefined} serviceIri
@@ -396,42 +281,13 @@ function exportDistribution(
 
   /** @type * */
   const result = {
+    "typ": "Distribuce",
     "právní_předpis":
       asUniqAndSorted([
         ...distribution.legislation,
         ...selectDistributionLegislation(dataset, distribution)
       ]),
   };
-
-  // First we deal with the non-public mode as it adds some properties.
-
-  if (dataset.mode === MODE_NON_PUBLIC) {
-    result["typ"] = ["Distribuce", "Datové rozhraní"];
-    //
-    if (distribution.typy_obsahu.length > 0) {
-      result["typ_obsahu_sdílených_údajů"] = distribution.typy_obsahu;
-    }
-    if (isNotEmpty(distribution.zpusob_sdileni)) {
-      result["způsob_sdílení_údajů"] = distribution.zpusob_sdileni;
-    }
-    if (distribution.zpusoby_ziskani.length > 0) {
-      result["způsob_získání_sdílených_údajů"] = distribution.zpusoby_ziskani;
-    }
-    if (distribution.zprostredkovava_sdileni.length > 0) {
-      result["sdílí_údaj"] =
-        distribution.zprostredkovava_sdileni.map(item => ({
-          "typ": "Sdílení údaje",
-          "typ_obsahu_sdílených_údajů": item.typ_obsahu,
-          "způsob_sdílení_údajů": item.zpusob_sdileni,
-          "způsob_získání_sdílených_údajů": item.zpusob_ziskani,
-          "odpovídající_pojem": item.related_term,
-        }));
-    }
-  } else {
-    result["typ"] = "Distribuce";
-  }
-
-  // Next is the rest of the distribution entity.
 
   const iri = distributionIri(distribution, distributionIndex);
   if (isNotEmpty(iri)) {
@@ -464,7 +320,7 @@ function exportDistribution(
 
 /**
  * @param {{mode: "default" | "hvd" | "non-public"}} dataset
- * @param {import("../distribution-model").Distribution} distribution
+ * @param {import("../../distribution-model").Distribution} distribution
  * @returns {string[]}
  */
 function selectDistributionLegislation(dataset, distribution) {
@@ -481,21 +337,6 @@ function selectDistributionLegislation(dataset, distribution) {
           ESBIRKA.SB_1999_106_2025_08_19,
         ];
       }
-    case MODE_NON_PUBLIC:
-      if (distribution.zpusoby_ziskani.length === 0 &&
-        isEmpty(distribution.zpusob_sdileni) &&
-        distribution.typy_obsahu.length === 0 &&
-        distribution.zprostredkovava_sdileni.length === 0) {
-        return [
-          ESBIRKA.SB_2026_60_2026_05_27,
-        ];
-      } else {
-        return [
-          ESBIRKA.SB_2026_60_2026_05_27,
-          ESBIRKA.SB_2000_365_2026_01_01,
-          ESBIRKA.SB_2023_360_2024_07_01,
-        ]
-      }
     case MODE_OPEN_DATA:
     default:
       return [
@@ -505,7 +346,7 @@ function selectDistributionLegislation(dataset, distribution) {
 }
 
 /**
- * @param {import("../distribution-model").Distribution} distribution
+ * @param {import("../../distribution-model").Distribution} distribution
  * @returns
  */
 function exportTermsOfUse(distribution) {
@@ -600,7 +441,7 @@ function exportTermsOfUse(distribution) {
 }
 
 /**
- * @param {import("../distribution-model").Distribution} distribution
+ * @param {import("../../distribution-model").Distribution} distribution
  * @param {*} parent Output argument.
  */
 function addFileDistribution(distribution, parent) {
@@ -633,7 +474,7 @@ function addFileDistribution(distribution, parent) {
 
 /**
  * @param {{hvd_categories: string[]}} dataset
- * @param {import("../distribution-model").Distribution} distribution
+ * @param {import("../../distribution-model").Distribution} distribution
  * @param  {(service: *, distribution: string) => string | undefined} serviceIri
  * @param {*} parent Output argument.
  */
@@ -699,40 +540,4 @@ function addDataService(
     }
   }
 
-}
-
-//
-// Section utilities
-//
-
-/**
- * @param {string} value_cs
- * @param {string | undefined} value_en
- * @returns {{cs?: string, en?: string}}
- */
-function asLanguageMap(value_cs, value_en = undefined) {
-  const result = {};
-  if (isNotEmpty(value_cs)) {
-    result["cs"] = value_cs;
-  }
-  if (isNotEmpty(value_en)) {
-    result["en"] = value_en;
-  }
-  return result;
-}
-
-/**
- * @param {undefined | null | string} value
- * @returns {boolean}
- */
-function isNotEmpty(value) {
-  return !isEmpty(value);
-}
-
-/**
- * @param {undefined | null | string} value
- * @returns {boolean}
- */
-function isEmpty(value) {
-  return value === undefined || value === null || value === "";
 }

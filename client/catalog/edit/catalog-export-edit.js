@@ -1,6 +1,6 @@
 const CONTEXT =
   "https://ofn.gov.cz/dcat-ap-cz-rozhraní-katalogů-dat/"
-  + "draft/katalog/kontext.jsonld";
+  + "2026-09-23/katalog/kontext.jsonld";
 
 export function exportCatalogToJsonLd(catalog) {
   const output = {

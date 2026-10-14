@@ -44,13 +44,21 @@
       </v-flex>
     </v-layout>
     <v-layout row>
-      <h2 class="display-1">
-        {{ dataset.title_cs }}
-        {{ dataset.title_en ? "| " + dataset.title_en : "" }}
-      </h2>
-      <v-spacer />
+      <v-flex
+        grow
+        style="min-width: 0"
+      >
+        <h2
+          class="display-1"
+          style="overflow-wrap: anywhere; word-break: break-word"
+        >
+          {{ dataset.title_cs }}
+          {{ dataset.title_en ? "| " + dataset.title_en : "" }}
+        </h2>
+      </v-flex>
       <v-btn
-        class="hidden-xs-only"
+        class="hidden-xs-only ml-2"
+        style="flex: none"
         rounded
         outlined
         :color="downloadColor"
@@ -63,6 +71,7 @@
       </v-btn>
       <v-btn
         v-if="!exportOptions.shouldPost"
+        style="flex: none"
         :color="optionsColor"
         icon
         @click="openOptions"

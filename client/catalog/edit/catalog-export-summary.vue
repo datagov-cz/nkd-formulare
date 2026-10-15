@@ -29,17 +29,23 @@
       row
       style="align-items: end"
     >
-      <v-flex>
-        <h2 class="display-1">
+      <v-flex
+        grow
+        style="min-width: 0"
+      >
+        <h2
+          class="display-1"
+          style="overflow-wrap: anywhere; word-break: break-word"
+        >
           {{ catalog.title_cs }}
           {{ catalog.title_en ? "| " + catalog.title_en : "" }}
         </h2>
       </v-flex>
-      <v-spacer />
       <v-btn
         :disabled="!isValid"
         color="success"
-        class="mb-2"
+        class="mb-2 mx-2 wrapping-btn"
+        style="flex: none"
         rounded
         outlined
         @click="onDownload"
@@ -221,3 +227,17 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  /* Let long labels wrap and grow the button instead of being clipped. */
+  .wrapping-btn.v-btn {
+    height: auto !important;
+    min-height: 36px;
+  }
+
+  .wrapping-btn.v-btn >>> .v-btn__content {
+    white-space: normal;
+    padding: 6px 0;
+    text-align: left;
+  }
+</style>

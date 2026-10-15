@@ -1,0 +1,12 @@
+/* Issue #239: let long button labels wrap and grow the button instead of being clipped. */
+
+.wrapping-btn.v-btn {
+    height: auto !important;
+    min-height: 36px;
+}
+
+.wrapping-btn.v-btn .v-btn__content {
+    white-space: normal;
+    text-align: left;
+    padding: 6px 0;
+}

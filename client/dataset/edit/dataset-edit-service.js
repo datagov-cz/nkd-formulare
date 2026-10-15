@@ -27,15 +27,19 @@ export function onRouteChange(component, location) {
   // Enable navigation back to the mode selection screen.
   // So if the mode has been determined by user action (select or file upload)
   // and there are no query arguments - we are back to the select page.
-  if (component.userSelectedModel && Object.keys(location.query).length === 0) {
+  if (component.ui.userSelectedMode && mode === null) {
     component.data.status = "select-mode";
+    // We are back on a selection so we cancel the user selection mode.
+    component.ui.userSelectedMode = false;
     return;
   }
 
   // Enable navigation forward from the selection screen.
-  if (component.data.status === "select-mode"
-    && mode !== component.data.dataset.model) {
+  if (component.data.status === "select-mode" && mode !== null) {
     component.data.status = "ready";
+    // We need to switch back to user selected mode.
+    component.ui.userSelectedMode = true;
+    component.data.dataset.mode = mode;
     return;
   }
 
@@ -121,16 +125,14 @@ export async function onDatasetEditMounted(component) {
       next = await importFromByUrl(
         query.file, language, query.isLocalCatalog);
     } else {
-      // We have no information about the dataset.
+      // We have no information about the mode for the dataset.
       if (query.mode === null) {
         // We do not know the mode, we need to let user choose.
         component.data.status = "select-mode";
-        component.userSelectedModel = true;
         return;
       }
       // Else we can create a dataset.
       next = createEmptyDataset(query.isLocalCatalog, query.mode);
-      component.userSelectedModel = false;
     }
   } catch (ex) {
     console.error("Can't create dataset.", ex);
@@ -379,6 +381,9 @@ export function onSelectMode(component, mode) {
     const next = createEmptyDataset(query.isLocalCatalog, mode);
     initializeWithData(component, next);
   }
+
+  // The mode has been selected by the user.
+  component.ui.userSelectedMode = true;
 }
 
 export function onStepperInput(component, value) {
@@ -462,6 +467,8 @@ export async function onLoadFromFile(component, file) {
     const data = await importFromJsonLd(
       content, component.$vuetify.lang.current);
     setDataToComponent(component, data.dataset, data.distributions);
+    // File mode has been selected by the file upload.
+    component.ui.fileSelectedMode = true;
   } catch (error) {
     console.error("Can't import file.", error);
     component.ui.uploadFailedVisible = true;
@@ -496,6 +503,8 @@ export async function onLoadFromUrl(component, url) {
     const data = await importDatasetFromUrl(
       url, component.$vuetify.lang.current);
     setDataToComponent(component, data.dataset, data.distributions);
+    // File mode has been selected by the file import.
+    component.ui.fileSelectedMode = true;
   } catch (error) {
     console.error("Can't import url.", error);
     component.ui.uploadFailedVisible = true;

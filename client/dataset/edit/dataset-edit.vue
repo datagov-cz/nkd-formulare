@@ -181,7 +181,9 @@ export default {
       /** True to show upload failed dialog. */
       "uploadFailedVisible": false,
       /** True when mode was selected by the user. */
-      "userSelectedModel": false,
+      "userSelectedMode": false,
+      /** True when the mode was selected as a result of file import / upload. */
+      "fileSelectedMode": false,
     },
     "validation": {
       /**

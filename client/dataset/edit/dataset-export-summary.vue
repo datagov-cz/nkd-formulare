@@ -58,6 +58,7 @@
       </v-flex>
       <v-btn
         class="hidden-xs-only ml-2 wrapping-btn"
+        :class="{ 'mr-2': exportOptions.shouldPost }"
         style="flex: none"
         rounded
         outlined
@@ -394,6 +395,7 @@
         <template #activator="{ on }">
           <v-btn
             class="wrapping-btn"
+            :class="{ 'mr-2': exportOptions.shouldPost }"
             rounded
             :color="downloadColor"
             outlined

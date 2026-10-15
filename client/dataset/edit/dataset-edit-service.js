@@ -91,6 +91,17 @@ export async function onDatasetEditMounted(component) {
   const serverFormData = loadServerData();
 
   //
+  // Start with a common initialization.
+  // This does not depend on the dataset mode.
+  //
+
+  component.exportOptions = {
+    ...component.exportOptions,
+    "shouldPost": isNotEmpty(query.postUrl),
+    "postUrl": query.postUrl,
+  };
+
+  //
   // First step is to try and create a dataset.
   //
 
@@ -131,7 +142,7 @@ export async function onDatasetEditMounted(component) {
   // Now we have the data we need to continue with the initialization.
   //
 
-  initializeWithData(component, query, next);
+  initializeWithData(component, next);
 }
 
 /**
@@ -275,12 +286,10 @@ function createEmptyDataset(isLocalCatalog, mode) {
   };
 }
 
-function initializeWithData(component, query, next) {
+function initializeWithData(component, next) {
   component.exportOptions = {
     ...component.exportOptions,
     ...next.exportOptions,
-    "shouldPost": isNotEmpty(query.postUrl),
-    "postUrl": query.postUrl,
   };
 
   setDataToComponent(component, next.dataset, next.distributions);
@@ -368,7 +377,7 @@ export function onSelectMode(component, mode) {
   } else {
     // Prepare and initialize with new data.
     const next = createEmptyDataset(query.isLocalCatalog, mode);
-    initializeWithData(component, query, next);
+    initializeWithData(component, next);
   }
 }
 

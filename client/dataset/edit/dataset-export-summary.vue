@@ -57,7 +57,8 @@
         </h2>
       </v-flex>
       <v-btn
-        class="hidden-xs-only ml-2 wrapping-btn"
+        class="hidden-xs-only ml-2 align-self-center wrapping-btn"
+        :class="{ 'mr-2': exportOptions.shouldPost }"
         style="flex: none"
         rounded
         outlined
@@ -393,7 +394,8 @@
       >
         <template #activator="{ on }">
           <v-btn
-            class="wrapping-btn"
+            class="align-self-center wrapping-btn"
+            :class="{ 'mr-2': exportOptions.shouldPost }"
             rounded
             :color="downloadColor"
             outlined
@@ -588,18 +590,5 @@ function exportButtonLabel(iri, exportType, postData, isDataValid) {
 <style scoped>
   .multiline {
     white-space: pre-line;
-  }
-
-  /* Let long labels wrap and grow the button instead of being clipped. */
-  .wrapping-btn.v-btn {
-    height: auto !important;
-    min-height: 36px;
-    align-self: center;
-  }
-
-  .wrapping-btn.v-btn >>> .v-btn__content {
-    white-space: normal;
-    padding: 6px 0;
-    text-align: left;
   }
 </style>

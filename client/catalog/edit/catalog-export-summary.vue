@@ -227,17 +227,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  /* Let long labels wrap and grow the button instead of being clipped. */
-  .wrapping-btn.v-btn {
-    height: auto !important;
-    min-height: 36px;
-  }
-
-  .wrapping-btn.v-btn >>> .v-btn__content {
-    white-space: normal;
-    padding: 6px 0;
-    text-align: left;
-  }
-</style>

@@ -11,6 +11,9 @@ import {initializeTheme, registerListener} from "../app-service/theme";
 // Some updates for dark mode.
 import "../dark-mode-fix.css";
 
+// Wrapping buttons that grow instead of clipping long labels.
+import "../wrapping-button.css";
+
 // Fonts used by Vuetify instead of CDN.
 import "@mdi/font/css/materialdesignicons.css";
 

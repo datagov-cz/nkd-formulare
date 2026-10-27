@@ -1,4 +1,4 @@
-FROM node:21.1.0-bullseye
+FROM node:26.12.1
 
 WORKDIR /opt/dcat-ap-forms/
 COPY ./package*.json ./
